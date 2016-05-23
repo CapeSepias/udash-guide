@@ -1,13 +1,12 @@
 package io.udash.web.guide
 
 import io.udash._
+import io.udash.rpc._
 import io.udash.web.guide.components.{MenuContainer, MenuEntry, MenuLink}
 import io.udash.web.guide.rpc.RPCService
-import io.udash.rpc._
 import io.udash.wrappers.jquery._
 import org.scalajs.dom.{Element, document}
 
-import scala.scalajs.js
 import scala.scalajs.js.JSApp
 import scala.scalajs.js.annotation.JSExport
 
@@ -47,7 +46,8 @@ object Context {
     )),
     MenuContainer("Extensions", Seq(
       MenuLink("Internationalization", I18NExtState),
-      MenuLink("jQuery wrapper", JQueryExtState)
+      MenuLink("jQuery wrapper", JQueryExtState),
+      MenuLink("User activity", UserActivityExtState)
     )),
     MenuLink("License", LicenseState)/*,
     MenuLink("FAQ", FAQState)*/

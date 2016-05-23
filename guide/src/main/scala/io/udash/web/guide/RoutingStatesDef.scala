@@ -68,4 +68,6 @@ case object JQueryExtState extends RoutingState(ContentState)
 
 case object I18NExtState extends RoutingState(ContentState)
 
+case object UserActivityExtState extends RoutingState(ContentState)
+
 
