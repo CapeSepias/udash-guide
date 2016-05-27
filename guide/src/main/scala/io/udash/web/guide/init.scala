@@ -47,6 +47,7 @@ object Context {
     )),
     MenuContainer("Extensions", Seq(
       MenuLink("Internationalization", I18NExtState),
+      MenuLink("Twitter Bootstrap wrapper", BootstrapExtState),
       MenuLink("jQuery wrapper", JQueryExtState)
     )),
     MenuLink("License", LicenseState)/*,

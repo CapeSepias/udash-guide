@@ -5,7 +5,7 @@ import io.udash.web.guide.views.bootstrapping.{BootstrappingFrontendViewPresente
 import io.udash.web.guide.views.frontend.{FrontendFormsViewPresenter, FrontendPropertiesViewPresenter, FrontendRoutingViewPresenter, FrontendTemplatesViewPresenter, _}
 import io.udash.web.guide.views.rpc.{RpcIntroViewPresenter, RpcServerClientViewPresenter, _}
 import io.udash.web.guide.views._
-import io.udash.web.guide.views.ext.{I18NExtViewPresenter, JQueryExtViewPresenter}
+import io.udash.web.guide.views.ext.{BootstrapExtViewPresenter, I18NExtViewPresenter, JQueryExtViewPresenter}
 
 class StatesToViewPresenterDef extends ViewPresenterRegistry[RoutingState] {
   def matchStateToResolver(state: RoutingState): ViewPresenter[_ <: RoutingState] =
@@ -41,6 +41,7 @@ class StatesToViewPresenterDef extends ViewPresenterRegistry[RoutingState] {
 
       case I18NExtState => I18NExtViewPresenter
       case JQueryExtState => JQueryExtViewPresenter
+      case BootstrapExtState => BootstrapExtViewPresenter
 
       case FAQState => FAQViewPresenter
       case LicenseState => LicenseViewPresenter
