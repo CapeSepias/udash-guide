@@ -11,7 +11,6 @@ import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
 import scalatags.JsDom
-import scalacss.ScalatagsCss._
 
 trait IntroFormDemoModel {
   def minimum: Int
@@ -64,8 +63,8 @@ class IntroFormDemoComponent extends Component {
 
   class IntroFormDemoView(model: ModelProperty[IntroFormDemoModel], presenter: IntroFormDemoPresenter) {
     import io.udash.web.guide.Context._
+
     import JsDom.all._
-    import scalacss.Defaults._
     import scalacss.ScalatagsCss._
 
     private def i2s(i: Int) = i.toString
@@ -77,11 +76,11 @@ class IntroFormDemoComponent extends Component {
 
     def render: Element = div(id := "frontend-intro-demo", GuideStyles.frame)(
       div(BootstrapStyles.inputGroup, GuideStyles.blockOnMobile)(
-        NumberInput(minimum)(id := "minimum", BootstrapStyles.formControl),
+        NumberInput.debounced(minimum)(id := "minimum", BootstrapStyles.formControl),
         span(BootstrapStyles.inputGroupAddon)(" <= "),
-        NumberInput(between)(id := "between", BootstrapStyles.formControl),
+        NumberInput.debounced(between)(id := "between", BootstrapStyles.formControl),
         span(BootstrapStyles.inputGroupAddon)(" <= "),
-        NumberInput(maximum)(id := "maximum", BootstrapStyles.formControl),
+        NumberInput.debounced(maximum)(id := "maximum", BootstrapStyles.formControl),
         div(BootstrapStyles.inputGroupBtn)(
           button(id := "randomize", BootstrapStyles.btn, BootstrapStyles.btnPrimary)(onclick :+= ((ev: MouseEvent) => {
             presenter.randomize()

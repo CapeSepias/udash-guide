@@ -1,11 +1,13 @@
 package io.udash.web.guide.views.ext
 
-import io.udash.View
+import io.udash._
+import io.udash.bindings.Checkbox
 import io.udash.core.DefaultViewPresenterFactory
 import io.udash.web.commons.components.CodeBlock
 import io.udash.web.guide.UserActivityExtState
+import io.udash.web.guide.styles.BootstrapStyles
 import io.udash.web.guide.styles.partials.GuideStyles
-import io.udash.web.guide.views.{References, Versions}
+import io.udash.web.guide.views.ext.demo.UrlLoggingDemo
 import org.scalajs.dom
 
 import scalatags.JsDom
@@ -14,100 +16,75 @@ case object UserActivityExtViewPresenter extends DefaultViewPresenterFactory[Use
 
 class UserActivityExtView extends View {
 
+  import io.udash.web.guide.Context._
+
   import JsDom.all._
+  import scalacss.ScalatagsCss._
 
   override def getTemplate: dom.Element = div(
-    h1("Udash jQuery wrapper"),
+    h1("Udash user activity monitoring"),
     p(
-      "The jQuery libarary is a very popular tool in the web development. We have created a strongly typed wrapper for jQuery, ",
-      "which allows you to use jQuery in the typed environment of Scala.js."
+      """When it comes to website tracking there are a plethora of metrics at our disposal.
+        |If we’re talking user engagement, we might look at the bounce rate, average time on site, or average page views per visit.
+        |For organic search, we might look at the number of organic visits, top organic keywords, and others.
+        |Then there’s content — the king of all data. Which web pages are the most popular?
+        |What are the most common navigation flows? Which features are most commonly used?
+        |Udash user activity extenstions enable you to gather the data you need to provide the best user experience for your website.""".stripMargin
     ),
-    h2("The first steps"),
-    p("To start development with the jQuery wrapper add the following line in you frontend module dependencies: "),
+    h2("Browser navigation"),
+    p("To enable browser navigation tracking, simply mixin UrlLogging into your frontend application.",
+      "The ", i("log(url, referrer)"), " method will be called whenever the user changes app state."),
+    p("You can see this mechanism in action here in the guide. We've already provided the implementation:"),
     CodeBlock(
-      s""""io.udash" %%% "udash-jquery" % "${Versions.udashJQueryVersion}"""".stripMargin
+      s"""implicit val applicationInstance = new Application[RoutingState](routingRegistry, viewPresenterRegistry, RootState) with UrlLogging[RoutingState] {
+          |    override protected def log(url: String, referrer: Option[String]): Unit = UrlLoggingDemo.log(url, referrer)
+          |}""".stripMargin
     )(GuideStyles),
-    p("The wrapper provides a typed equivalent of the jQuery ", i("$()"), " operator: "),
     CodeBlock(
-      s"""import io.udash.wrappers.jquery._
-          |import scalatags.JsDom.all._
+      s"""object UrlLoggingDemo {
+          |  import io.udash.web.guide.Context._
           |
-         |val component = h1("Hello, jQuery!").render
+         |  val enabled = Property(false)
+          |  val history = SeqProperty[(String, Option[String])](ListBuffer.empty)
+          |  enabled.listen(b => if(!b) history.set(ListBuffer.empty))
           |
-         |val paragraphs = jQ("p")
-          |val hello = jQ(component)""".stripMargin
+         |  def log(url: String, referrer: Option[String]): Unit =
+          |    if(enabled.get) history.append((url, referrer))
+          |
+         |}""".stripMargin
     )(GuideStyles),
-    p("Now you can use any jQuery method on these values: "),
-    CodeBlock(
-      s"""paragraphs.show(1500, EasingFunction.swing)
-          |hello.hide(AnimationOptions(
-          |  duration = Some(3000),
-          |  easing = Some(EasingFunction.linear)
-          |))""".stripMargin
-    )(GuideStyles),
-    h2("jQuery event handlers"),
-    p("The below example presents events handling with jQuery wrapper: "),
-    CodeBlock(
-      s"""val onCallback = (_: Element, _: JQueryEvent) =>
-          |  jQ(".demo ul").append(li("This will be added on every click").render)
-          |val oneCallback = (_: Element, _: JQueryEvent) =>
-          |  jQ(".demo ul").append(li("This will be added only once").render)
-          |
-         |val content = div(cls := "demo")(
-          |  button(id := "click")("Click me"),
-          |  ul(),
-          |  button(
-          |    id := "off",
-          |    onclick :+= ((_: Event) => {
-          |      jQ(".demo #click")
-          |        .off("click", onCallback)
-          |        .off("click", oneCallback)
-          |      false
-          |    })
-          |  )("Off")
-          |).render
-          |
-         |jQ(".demo #click")
-          |  .on("click", onCallback)
-          |  .one("click", oneCallback)""".stripMargin
-    )(GuideStyles),
-    p(
-      "Notice that if you want to use the ", i("off()"), " method, then you have to pass exectly the same object ",
-      "that you passed to the method ", i("on()"), " or ", i("one()"), ". Be careful with implicit conversions, ",
-      "they create new object every time."
-    ),
-    h2("jQuery callbacks"),
-    p("The wrapper provides also typed API for the jQuery callbacks mechanism: "),
-    CodeBlock(
-      s"""val callbacks = jQ.callbacks[js.Function1[(Int, Int), js.Any], (Int, Int)]()
-          |callbacks.add((t: (Int, Int)) => {
-          |  val (a, b) = t
-          |  jQ("#plus").append(li(s"${"$a + $b = ${a + b}"}").render)
-          |})
-          |callbacks.add((t: (Int, Int)) => {
-          |  val (a, b) = t
-          |  jQ("#minus").append(li(s"${"$a - $b = ${a - b}"}").render)
-          |})
-          |callbacks.add((t: (Int, Int)) => {
-          |  val (a, b) = t
-          |  jQ("#mul").append(li(s"${"$a * $b = ${a * b}"}").render)
-          |})
-          |callbacks.add((t: (Int, Int)) => {
-          |  val (a, b) = t
-          |  jQ("#div").append(li(s"${"$a / $b = ${a / b}"}").render)
-          |})
-          |
-         |callbacks.fire(1, 1)
-          |callbacks.fire(3, 3)
-          |callbacks.fire(7, 4)
-          |
-         |callbacks.disable()
-          |callbacks.fire(1, 2)""".stripMargin
-    )(GuideStyles),
-    h2("What's next?"),
-    p(
-      "You can find more information on the wrapper ", a(href := References.udashjQueryWrapperRepo)("GitHub repository"), " ",
-      "It also contains an example application witch presents more ways of working with this wrapper."
+    p("to see it in action just enable logging below, switch to another chapter and come back here."), br,
+    form(BootstrapStyles.containerFluid)(
+      div(BootstrapStyles.row)(
+        div(BootstrapStyles.colMd4)(
+          div(BootstrapStyles.inputGroup)(
+            div(BootstrapStyles.inputGroupAddon)("Turn on logging:"),
+            div(BootstrapStyles.inputGroupAddon)(Checkbox(UrlLoggingDemo.enabled, cls := "checkbox-demo-a"))
+          )
+        )
+      )
+    ), br,
+    form(BootstrapStyles.containerFluid)(
+      div(BootstrapStyles.row)(
+        div(BootstrapStyles.colMd4)(
+          b("Url")
+        ),
+        div(BootstrapStyles.colMd4)(
+          b("Referrer")
+        )
+      ),
+      produce(UrlLoggingDemo.history)(seq =>
+        div()(seq.map { case (url, refOpt) =>
+          div(BootstrapStyles.row)(
+            div(BootstrapStyles.colMd4)(
+              url
+            ),
+            div(BootstrapStyles.colMd4)(
+              refOpt
+            )
+          )
+        }: _*).render
+      )
     )
   ).render
 

@@ -1,9 +1,11 @@
 package io.udash.web.guide
 
 import io.udash._
+import io.udash.routing.UrlLogging
 import io.udash.rpc._
 import io.udash.web.guide.components.{MenuContainer, MenuEntry, MenuLink}
 import io.udash.web.guide.rpc.RPCService
+import io.udash.web.guide.views.ext.demo.UrlLoggingDemo
 import io.udash.wrappers.jquery._
 import org.scalajs.dom.{Element, document}
 
@@ -15,7 +17,9 @@ object Context {
   private lazy val routingRegistry = new RoutingRegistryDef
   private lazy val viewPresenterRegistry = new StatesToViewPresenterDef
 
-  implicit val applicationInstance = new Application[RoutingState](routingRegistry, viewPresenterRegistry, RootState)
+  implicit val applicationInstance = new Application[RoutingState](routingRegistry, viewPresenterRegistry, RootState) with UrlLogging[RoutingState] {
+    override protected def log(url: String, referrer: Option[String]): Unit = UrlLoggingDemo.log(url, referrer)
+  }
   val serverRpc = DefaultServerRPC[MainClientRPC, MainServerRPC](new RPCService)
 
   val mainMenuEntries: Seq[MenuEntry] = Seq(

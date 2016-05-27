@@ -9,6 +9,7 @@ import scalatags.JsDom
 
 class TextAreaDemoComponent extends Component {
   import io.udash.web.guide.Context._
+
   import JsDom.all._
   import scalacss.ScalatagsCss._
 
@@ -18,13 +19,13 @@ class TextAreaDemoComponent extends Component {
     form(BootstrapStyles.containerFluid)(
       div(BootstrapStyles.row)(
         div(BootstrapStyles.colMd4)(
-          TextArea(text, BootstrapStyles.formControl)
+          TextArea.debounced(text, BootstrapStyles.formControl)
         ),
         div(BootstrapStyles.colMd4)(
-          TextArea(text, BootstrapStyles.formControl)
+          TextArea.debounced(text, BootstrapStyles.formControl)
         ),
         div(BootstrapStyles.colMd4)(
-          TextArea(text, BootstrapStyles.formControl)
+          TextArea.debounced(text, BootstrapStyles.formControl)
         )
       )
     )

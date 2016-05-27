@@ -5,7 +5,6 @@ import io.udash._
 import io.udash.web.guide.demos.rpc.GenCodecServerRPC
 import io.udash.web.guide.styles.BootstrapStyles
 import io.udash.web.guide.styles.partials.GuideStyles
-import io.udash.utils.Logger
 import io.udash.wrappers.jquery._
 import org.scalajs.dom._
 
@@ -26,9 +25,9 @@ trait GenCodecsDemoModel {
   def sealedTrait: Fruit
 }
 
-class GenCodecsDemoComponent extends Component {
-  import io.udash.web.guide.demos.rpc.GenCodecServerRPC._
+class GenCodecsDemoComponent extends Component with StrictLogging {
   import Context._
+  import io.udash.web.guide.demos.rpc.GenCodecServerRPC._
   
   override def getTemplate: Element = GenCodecsDemoViewPresenter()
 
@@ -46,34 +45,34 @@ class GenCodecsDemoComponent extends Component {
       val demoRpc: GenCodecServerRPC = Context.serverRpc.demos().gencodecsDemo()
       demoRpc.sendInt(Random.nextInt()) onComplete {
         case Success(response) => model.subProp(_.int).set(response)
-        case Failure(ex) => Logger.error(ex.getMessage)
+        case Failure(ex) => logger.error(ex.getMessage)
       }
       demoRpc.sendString(Random.nextString(10)) onComplete {
         case Success(response) => model.subProp(_.string).set(response)
-        case Failure(ex) => Logger.error(ex.getMessage)
+        case Failure(ex) => logger.error(ex.getMessage)
       }
       demoRpc.sendSeq(Seq(Random.nextString(5), Random.nextString(5))) onComplete {
         case Success(response) => model.subProp(_.seq).set(response)
-        case Failure(ex) => Logger.error(ex.getMessage)
+        case Failure(ex) => logger.error(ex.getMessage)
       }
       demoRpc.sendMap(Map(Random.nextString(5) -> Random.nextInt(), Random.nextString(5) -> Random.nextInt())) onComplete {
         case Success(response) => model.subProp(_.map).set(response.toSeq)
-        case Failure(ex) => Logger.error(ex.getMessage)
+        case Failure(ex) => logger.error(ex.getMessage)
       }
       demoRpc.sendCaseClass(DemoCaseClass(Random.nextInt(), Random.nextString(5))) onComplete {
         case Success(response) => model.subProp(_.caseClass).set(response)
-        case Failure(ex) => Logger.error(ex.getMessage)
+        case Failure(ex) => logger.error(ex.getMessage)
       }
       demoRpc.sendClass(new DemoClass(Random.nextInt(), Random.nextString(5))) onComplete {
         case Success(response) =>
           model.subProp(_.clsInt).set(response.i)
           model.subProp(_.clsString).set(response.s)
           model.subProp(_.clsVar).set(response._v)
-        case Failure(ex) => Logger.error(ex.getMessage)
+        case Failure(ex) => logger.error(ex.getMessage)
       }
       demoRpc.sendSealedTrait(Seq(Apple, Orange, Banana)(Random.nextInt(3))) onComplete {
         case Success(response) => model.subProp(_.sealedTrait).set(response)
-        case Failure(ex) => Logger.error(ex.getMessage)
+        case Failure(ex) => logger.error(ex.getMessage)
       }
     }
   }

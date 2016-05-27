@@ -18,7 +18,7 @@ object DemoPreview {
     val name = Property("World")
 
     div(DemoStyles.demoIOWrapper, GlobalStyles.table)(
-      TextInput(name, maxlength := 16, DemoStyles.demoInlineField, GlobalStyles.width100),
+      TextInput.debounced(name, maxlength := 16, DemoStyles.demoInlineField, GlobalStyles.width100),
       produce(name)(name => h3(DemoStyles.demoInlineField, DemoStyles.demoOutput, GlobalStyles.width50)(s"Hello, $name!").render)
     ).render
   }
@@ -43,7 +43,7 @@ object DemoPreview {
     val evens = numbers.filter(isEven)
 
     div(DemoStyles.demoIOWrapper)(
-      TextInput(input, `type` := "text", placeholder := "Type a number and press enter...", maxlength := 6, pattern := "\\d*", DemoStyles.demoInput, GlobalStyles.width100)(
+      TextInput.debounced(input, `type` := "text", placeholder := "Type a number and press enter...", maxlength := 6, pattern := "\\d*", DemoStyles.demoInput, GlobalStyles.width100)(
         onkeyup := ((ev: KeyboardEvent) => if (ev.keyCode == ext.KeyCode.Enter) {
           val n: Try[Int] = Try(input.get.toInt)
           if (n.isSuccess) {
@@ -88,7 +88,7 @@ object DemoPreview {
     })
 
     div(DemoStyles.demoIOWrapper, GlobalStyles.table)(
-      TextInput(email, maxlength := 32, DemoStyles.demoInlineField, GlobalStyles.width100),
+      TextInput.debounced(email, maxlength := 32, DemoStyles.demoInlineField, GlobalStyles.width100),
       span(DemoStyles.demoInlineField, DemoStyles.demoOutput, GlobalStyles.width50)(
         "Valid: ", bindValidation(email,
           _ => span("Wait...").render,
