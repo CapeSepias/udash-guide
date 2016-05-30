@@ -1,20 +1,48 @@
 package io.udash.web.guide.views.ext
 
-import io.udash._
 import io.udash.bindings.Checkbox
-import io.udash.core.DefaultViewPresenterFactory
+import io.udash._
+import io.udash.core.Presenter
 import io.udash.web.commons.components.CodeBlock
-import io.udash.web.guide.UserActivityExtState
+import io.udash.web.guide.demos.activity.Call
 import io.udash.web.guide.styles.BootstrapStyles
 import io.udash.web.guide.styles.partials.GuideStyles
 import io.udash.web.guide.views.ext.demo.UrlLoggingDemo
+import io.udash.web.guide.views.rpc.demos.PingPongCallDemoComponent
+import io.udash.web.guide.{Context, UserActivityExtState}
 import org.scalajs.dom
+import org.scalajs.dom._
 
+import scala.util.{Failure, Success}
 import scalatags.JsDom
 
-case object UserActivityExtViewPresenter extends DefaultViewPresenterFactory[UserActivityExtState.type](() => new UserActivityExtView)
+class UserActivityExtPresenter(model: SeqProperty[Call]) extends Presenter[UserActivityExtState.type] with StrictLogging {
 
-class UserActivityExtView extends View {
+  import io.udash.web.guide.Context._
+
+  override def handleState(state: UserActivityExtState.type): Unit = {}
+
+  def reload(): Unit = {
+    Context.serverRpc.demos().call().calls.onComplete {
+      case Success(calls) => model.set(calls)
+      case Failure(t) => logger.error(t.getMessage)
+    }
+  }
+}
+
+
+case object UserActivityExtViewPresenter extends ViewPresenter[UserActivityExtState.type] {
+
+  import io.udash.web.guide.Context._
+
+  override def create(): (View, Presenter[UserActivityExtState.type]) = {
+    val model = SeqProperty[Call]
+    val presenter = new UserActivityExtPresenter(model)
+    (new UserActivityExtView(model, presenter), presenter)
+  }
+}
+
+class UserActivityExtView(model: SeqProperty[Call], presenter: UserActivityExtPresenter) extends View {
 
   import io.udash.web.guide.Context._
 
@@ -54,39 +82,77 @@ class UserActivityExtView extends View {
          |}""".stripMargin
     )(GuideStyles),
     p("to see it in action just enable logging below, switch to another chapter and come back here."), br,
-    form(BootstrapStyles.containerFluid)(
-      div(BootstrapStyles.row)(
-        div(BootstrapStyles.colMd4)(
-          div(BootstrapStyles.inputGroup)(
-            div(BootstrapStyles.inputGroupAddon)("Turn on logging:"),
-            div(BootstrapStyles.inputGroupAddon)(Checkbox(UrlLoggingDemo.enabled, cls := "checkbox-demo-a"))
-          )
-        )
-      )
-    ), br,
-    form(BootstrapStyles.containerFluid)(
-      div(BootstrapStyles.row)(
-        div(BootstrapStyles.colMd4)(
-          b("Url")
-        ),
-        div(BootstrapStyles.colMd4)(
-          b("Referrer")
-        )
-      ),
-      produce(UrlLoggingDemo.history)(seq =>
-        div()(seq.map { case (url, refOpt) =>
-          div(BootstrapStyles.row)(
-            div(BootstrapStyles.colMd4)(
-              url
-            ),
-            div(BootstrapStyles.colMd4)(
-              refOpt
+    span(GuideStyles.frame)(
+      form(BootstrapStyles.containerFluid)(
+        div(BootstrapStyles.row)(
+          div(BootstrapStyles.colMd4)(
+            div(BootstrapStyles.inputGroup)(
+              div(BootstrapStyles.inputGroupAddon)("Turn on logging:"),
+              div(BootstrapStyles.inputGroupAddon)(Checkbox(UrlLoggingDemo.enabled, cls := "checkbox-demo-a"))
             )
           )
-        }: _*).render
+        )
+      ), br,
+      form(BootstrapStyles.containerFluid)(
+        div(BootstrapStyles.row)(
+          div(BootstrapStyles.colMd4)(
+            b("Url")
+          ),
+          div(BootstrapStyles.colMd4)(
+            b("Referrer")
+          )
+        ),
+        produce(UrlLoggingDemo.history)(seq =>
+          div()(seq.map { case (url, refOpt) =>
+            div(BootstrapStyles.row)(
+              div(BootstrapStyles.colMd4)(
+                url
+              ),
+              div(BootstrapStyles.colMd4)(
+                refOpt
+              )
+            )
+          }: _*).render
+        )
+      )
+    ),
+    h2("RPC call logging"),
+    p("Enabling backend call logging is also quite simple. In order to define logging behaviour, you have to mix ",
+      "CallLogging into your ExposesServerRPC, e.g.:"),
+    CodeBlock(
+      """ new DefaultExposesServerRPC[MainServerRPC](new ExposedRpcInterfaces(clientId)) with CallLogging[MainServerRPC] {
+        |  override protected val metadata: RPCMetadata[MainServerRPC] = RPCMetadata[MainServerRPC]
+        |
+        |  override def log(rpcName: String, methodName: String, args: Seq[String]): Unit =
+        |    println(s"$rpcName $methodName $args")
+        |} """.stripMargin)(GuideStyles),
+    p("The methods you want log calls on have to be annotated with ", i("@Logged"), ". For this example we reused the ping example from RPC guide introduction:"),
+    CodeBlock(
+      """import com.avsystem.commons.rpc.RPC
+        |import io.udash.rpc.utils.Logged
+        |
+        |@RPC
+        |trait PingPongServerRPC {
+        |
+        |  @Logged
+        |  def fPing(id: Int): Future[Int]
+        |}""".stripMargin)(GuideStyles),
+    new PingPongCallDemoComponent,
+    span(GuideStyles.frame)(
+      button(id := "call-logging-demo", BootstrapStyles.btn, BootstrapStyles.btnPrimary)
+      (onclick :+= ((_: MouseEvent) => {
+        presenter.reload();
+        true
+      }))("Load call list"),
+      produce(model)(seq =>
+        ul(
+          seq.map(call => li(call.toString)): _*
+        ).render
       )
     )
   ).render
 
-  override def renderChild(view: View): Unit = {}
+  override def renderChild(view: View): Unit = {
+
+  }
 }
