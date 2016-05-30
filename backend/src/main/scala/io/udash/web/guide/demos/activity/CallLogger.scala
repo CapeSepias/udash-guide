@@ -9,4 +9,6 @@ class CallLogger {
     _calls += call
 
   def calls: List[Call] = _calls.toList
+
+  def clear(): Unit = _calls.clear()
 }

@@ -4,7 +4,7 @@ import io.udash.bindings.Checkbox
 import io.udash._
 import io.udash.core.Presenter
 import io.udash.web.commons.components.CodeBlock
-import io.udash.web.guide.demos.activity.Call
+import io.udash.web.guide.demos.activity.{Call, CallServerRPC}
 import io.udash.web.guide.styles.BootstrapStyles
 import io.udash.web.guide.styles.partials.GuideStyles
 import io.udash.web.guide.views.ext.demo.UrlLoggingDemo
@@ -20,10 +20,14 @@ class UserActivityExtPresenter(model: SeqProperty[Call]) extends Presenter[UserA
 
   import io.udash.web.guide.Context._
 
-  override def handleState(state: UserActivityExtState.type): Unit = {}
+  val rpc: CallServerRPC = Context.serverRpc.demos().call()
+
+  override def handleState(state: UserActivityExtState.type): Unit = {
+    rpc.clearCalls()
+  }
 
   def reload(): Unit = {
-    Context.serverRpc.demos().call().calls.onComplete {
+    rpc.calls.onComplete {
       case Success(calls) => model.set(calls)
       case Failure(t) => logger.error(t.getMessage)
     }

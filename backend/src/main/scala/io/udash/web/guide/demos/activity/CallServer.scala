@@ -4,4 +4,6 @@ import scala.concurrent.Future
 
 class CallServer(callLogger: CallLogger) extends CallServerRPC {
   override def calls: Future[Seq[Call]] = Future.successful(callLogger.calls)
+
+  override def clearCalls(): Future[Unit] = Future.successful(callLogger.clear())
 }
