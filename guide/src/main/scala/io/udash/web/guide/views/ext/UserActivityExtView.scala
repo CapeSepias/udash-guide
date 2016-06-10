@@ -64,26 +64,28 @@ class UserActivityExtView(model: SeqProperty[Call], presenter: UserActivityExtPr
         |Udash user activity extenstions enable you to gather the data you need to provide the best user experience for your website.""".stripMargin
     ),
     h2("Browser navigation"),
-    p("To enable browser navigation tracking, simply mixin UrlLogging into your frontend application.",
-      "The ", i("log(url, referrer)"), " method will be called whenever the user changes app state."),
-    p("You can see this mechanism in action here in the guide. We've already provided the implementation:"),
+    p("To enable browser navigation tracking, simply mixin UrlLogging into your frontend application. ",
+      "The ", i("log(url, referrer)"), " method will be called whenever the user changes app state."
+    ),
+    p("You can see this mechanism in action here in the guide. We've already provided the implementation: "),
     CodeBlock(
-      s"""implicit val applicationInstance = new Application[RoutingState](routingRegistry, viewPresenterRegistry, RootState) with UrlLogging[RoutingState] {
-          |    override protected def log(url: String, referrer: Option[String]): Unit = UrlLoggingDemo.log(url, referrer)
+      s"""val application = new Application[RoutingState](routingRegistry,
+          |viewPresenterRegistry, RootState) with UrlLogging[RoutingState] {
+          |  override protected def log(url: String, referrer: Option[String]): Unit =
+          |    UrlLoggingDemo.log(url, referrer)
           |}""".stripMargin
     )(GuideStyles),
     CodeBlock(
       s"""object UrlLoggingDemo {
           |  import io.udash.web.guide.Context._
           |
-         |  val enabled = Property(false)
+          |  val enabled = Property(false)
           |  val history = SeqProperty[(String, Option[String])](ListBuffer.empty)
           |  enabled.listen(b => if(!b) history.set(ListBuffer.empty))
           |
-         |  def log(url: String, referrer: Option[String]): Unit =
+          |  def log(url: String, referrer: Option[String]): Unit =
           |    if(enabled.get) history.append((url, referrer))
-          |
-         |}""".stripMargin
+          |}""".stripMargin
     )(GuideStyles),
     p("to see it in action just enable logging below, switch to another chapter and come back here."), br,
     span(GuideStyles.frame)(
@@ -122,15 +124,18 @@ class UserActivityExtView(model: SeqProperty[Call], presenter: UserActivityExtPr
     ),
     h2("RPC call logging"),
     p("Enabling backend call logging is also quite simple. In order to define logging behaviour, you have to mix ",
-      "CallLogging into your ExposesServerRPC, e.g.:"),
+      "CallLogging into your ExposesServerRPC, e.g.: "),
     CodeBlock(
-      """ new DefaultExposesServerRPC[MainServerRPC](new ExposedRpcInterfaces(clientId)) with CallLogging[MainServerRPC] {
-        |  override protected val metadata: RPCMetadata[MainServerRPC] = RPCMetadata[MainServerRPC]
+      """new DefaultExposesServerRPC[MainServerRPC](
+        |  new ExposedRpcInterfaces(clientId)
+        |) with CallLogging[MainServerRPC] {
+        |  override protected val metadata: RPCMetadata[MainServerRPC] =
+        |    RPCMetadata[MainServerRPC]
         |
         |  override def log(rpcName: String, methodName: String, args: Seq[String]): Unit =
         |    println(s"$rpcName $methodName $args")
         |} """.stripMargin)(GuideStyles),
-    p("The methods you want log calls on have to be annotated with ", i("@Logged"), ". For this example we reused the ping example from RPC guide introduction:"),
+    p("The methods you want log calls on have to be annotated with ", i("@Logged"), ". For this example we reused the ping example from RPC guide introduction: "),
     CodeBlock(
       """import com.avsystem.commons.rpc.RPC
         |import io.udash.rpc.utils.Logged
@@ -145,7 +150,7 @@ class UserActivityExtView(model: SeqProperty[Call], presenter: UserActivityExtPr
     span(GuideStyles.frame)(
       button(id := "call-logging-demo", BootstrapStyles.btn, BootstrapStyles.btnPrimary)
       (onclick :+= ((_: MouseEvent) => {
-        presenter.reload();
+        presenter.reload()
         true
       }))("Load call list"),
       produce(model)(seq =>
