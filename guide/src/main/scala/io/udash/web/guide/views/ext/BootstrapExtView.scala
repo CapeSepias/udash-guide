@@ -1,9 +1,10 @@
 package io.udash.web.guide.views.ext
 
 import io.udash._
+import io.udash.bootstrap.BootstrapStyles
 import io.udash.web.commons.components.CodeBlock
+import io.udash.web.guide._
 import io.udash.web.guide.styles.partials.GuideStyles
-import io.udash.web.guide.{Context, _}
 import io.udash.web.guide.views.{References, Versions}
 import org.scalajs.dom
 
@@ -14,6 +15,7 @@ case object BootstrapExtViewPresenter extends DefaultViewPresenterFactory[Bootst
 
 class BootstrapExtView extends View {
   import JsDom.all._
+  import scalacss.ScalatagsCss._
 
   override def getTemplate: dom.Element = div(
     h1("Udash Bootstrap wrapper"),
@@ -25,7 +27,33 @@ class BootstrapExtView extends View {
     )(GuideStyles),
     p("The wrapper provides a typed equivalent of the ", a(href := References.bootstrapHomepage)("Twitter Bootstrap"), " API."),
     h2("Statics"),
-    p("..."),
+    p(s"All Bootstrap tags and styles are available as ScalaCSS applicable styles (", i("StyleA"), ")"),
+    CodeBlock(
+      s"""|div(BootstrapStyles.row)(
+          |  div(BootstrapStyles.Grid.colXs9, BootstrapStyles.Well.well)(".col-xs-9"),
+          |  div(BootstrapStyles.Grid.colXs4, BootstrapStyles.Well.well)(
+          |    ".col-xs-4",br,
+          |    "Since 9 + 4 = 13 > 12, this 4-column-wide div",
+          |    "gets wrapped onto a new line as one contiguous unit."
+          |  ),
+          |  div(BootstrapStyles.Grid.colXs6, BootstrapStyles.Well.well)(
+          |    ".col-xs-6",br,
+          |    "Subsequent columns continue along the new line."
+          |  )
+          |)""".stripMargin
+    )(GuideStyles),
+    div(BootstrapStyles.row)(
+      div(BootstrapStyles.Grid.colXs9, BootstrapStyles.Well.well)(".col-xs-9"),
+      div(BootstrapStyles.Grid.colXs4, BootstrapStyles.Well.well)(
+        ".col-xs-4", br,
+        "Since 9 + 4 = 13 > 12, this 4-column-wide div",
+        "gets wrapped onto a new line as one contiguous unit."
+      ),
+      div(BootstrapStyles.Grid.colXs6, BootstrapStyles.Well.well)(
+        ".col-xs-6", br,
+        "Subsequent columns continue along the new line."
+      )
+    ),
     h2("Components"),
     p("..."),
     h3("Glyphicons & FontAwesome"),
