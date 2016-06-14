@@ -26,7 +26,7 @@ class BootstrapExtView extends View {
     )(GuideStyles),
     p("The wrapper provides a typed equivalent of the ", a(href := References.bootstrapHomepage)("Twitter Bootstrap"), " API."),
     h2("Statics"),
-    p(s"All Bootstrap tags and styles are available as ScalaCSS applicable styles (", i("StyleA"), ")"),
+    p(s"All Bootstrap tags and styles are available as ScalaCSS applicable styles (", i("StyleA"), ")."),
     CodeBlock(
       s"""|div(BootstrapStyles.row)(
           |  div(BootstrapStyles.Grid.colXs9, BootstrapStyles.Well.well)(
@@ -64,16 +64,83 @@ class BootstrapExtView extends View {
           |  UdashDropdown.DropdownDivider,
           |  UdashDropdown.DropdownHeader("Dynamic")
           |))
-          |val dropup = UdashDropdown.dropup(items)("Dropup")
-          |dropup.listen(event => clicks.append(event.item.toString))
-          |dropup.render""".stripMargin
+          |
+          |val clicks = SeqProperty[String](Seq.empty)
+          |val listener: UdashDropdown[UdashDropdown.DefaultDropdownItem]#EventHandler = {
+          |  case UdashDropdown.SelectionEvent(_, item) =>
+          |    clicks.append(item.toString)
+          |  case ev: DropdownEvent[_] =>
+          |    logger.info(ev.toString)
+          |}
+          |
+          |val dropdown = UdashDropdown.dropup(items)("Dropdown")
+          |val dropup = UdashDropdown(items)("Dropup")
+          |dropdown.listen(listener)
+          |dropup.listen(listener)
+          |
+          |div(
+          |  dropdown.render,
+          |  dropup.render,
+          |  bind(clicks)
+          |)""".stripMargin
     )(GuideStyles),
     BootstrapDemos.dropdown(),
     h3("Button"),
-    p("..."),
+    p("Bootstrap buttons are easy to use as ", i("UdashButton"), "s. They support click listening, ",
+      "provide typesafe style & size classes and a ", i("Property"), "-based mechanism for activation and disabling."),
+    p("This example shows a variety of available button options. Small button indicators register their clicks and are ",
+      "randomly set as active or disabled by the block button action, which also clears the click history."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""|val buttons = Seq(
+          |  UdashButton(size = ButtonSize.Small)("Default"),
+          |  UdashButton(ButtonStyle.Primary, ButtonSize.Small)("Primary"),
+          |  UdashButton(ButtonStyle.Success, ButtonSize.Small)("Success"),
+          |  UdashButton(ButtonStyle.Info, ButtonSize.Small)("Info") ,
+          |  UdashButton(ButtonStyle.Warning, ButtonSize.Small)("Warning") ,
+          |  UdashButton(ButtonStyle.Danger, ButtonSize.Small)("Danger"),
+          |  UdashButton(ButtonStyle.Link, ButtonSize.Small)("Link")
+          |)
+          |
+          |val clicks = SeqProperty[String](Seq.empty)
+          |buttons.foreach(_.listen {
+          |  case ev => clicks.append(ev.button.render.textContent)
+          |})
+          |
+          |val push = UdashButton(size = ButtonSize.Large, block = true)(
+          |  "Push the button!"
+          |)
+          |push.listen {
+          |  case _ =>
+          |    clicks.set(Seq.empty)
+          |    buttons.foreach(button => {
+          |      val random = Random.nextBoolean()
+          |      button.disabled.set(random)
+          |    })
+          |}
+          |
+          |div(
+          |  push.render,
+          |  buttons.map(_.render)
+          |).render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.button(),
+    p("The below example presents helper method for creating toggle buttons."),
+    CodeBlock(
+      s"""|val buttons = Seq(
+          |  UdashButton.toggle()("Default"),
+          |  UdashButton.toggle(ButtonStyle.Primary)("Primary"),
+          |  UdashButton.toggle(ButtonStyle.Success)("Success"),
+          |  UdashButton.toggle(ButtonStyle.Info)("Info"),
+          |  UdashButton.toggle(ButtonStyle.Warning)("Warning") ,
+          |  UdashButton.toggle(ButtonStyle.Danger)("Danger"),
+          |  UdashButton.toggle(ButtonStyle.Link)("Link")
+          |)
+          |
+          |div(
+          |  buttons.map(_.render)
+          |).render""".stripMargin
+    )(GuideStyles),
+    BootstrapDemos.toggleButton(),
     h3("Button groups"),
     p("..."),
     CodeBlock(
