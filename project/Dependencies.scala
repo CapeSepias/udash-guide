@@ -19,8 +19,6 @@ object Dependencies extends Build {
   val typesafeConfigVersion = "1.3.0"
   val springVersion = "4.2.5.RELEASE"
 
-  //val bootstrapVersion = "3.3.1-1"
-
   val seleniumVersion = "2.53.0"
   val scalatestVersion = "3.0.0-M15"
   val scalamockVersion = "3.2.2"
@@ -43,7 +41,6 @@ object Dependencies extends Build {
   ))
 
   val frontendJSDeps = Def.setting(Seq(
-    //"org.webjars" % "bootstrap-sass" % bootstrapVersion / "3.3.1/javascripts/bootstrap.js" dependsOn "jquery.js"
   ))
 
   val homepageJSDeps = Def.setting(Seq(

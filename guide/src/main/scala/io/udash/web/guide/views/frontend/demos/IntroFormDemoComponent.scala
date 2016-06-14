@@ -3,7 +3,7 @@ package io.udash.web.guide.views.frontend.demos
 import java.lang.Float
 
 import io.udash._
-import io.udash.web.guide.styles.BootstrapStyles
+import io.udash.bootstrap.BootstrapStyles
 import io.udash.web.guide.styles.partials.GuideStyles
 import org.scalajs.dom.{Element, MouseEvent}
 
@@ -11,7 +11,6 @@ import scala.collection.mutable
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
 import scalatags.JsDom
-import scalacss.ScalatagsCss._
 
 trait IntroFormDemoModel {
   def minimum: Int
@@ -64,8 +63,8 @@ class IntroFormDemoComponent extends Component {
 
   class IntroFormDemoView(model: ModelProperty[IntroFormDemoModel], presenter: IntroFormDemoPresenter) {
     import io.udash.web.guide.Context._
+
     import JsDom.all._
-    import scalacss.Defaults._
     import scalacss.ScalatagsCss._
 
     private def i2s(i: Int) = i.toString
@@ -76,14 +75,14 @@ class IntroFormDemoComponent extends Component {
     private val maximum = model.subProp(_.maximum).transform(i2s, s2i)
 
     def render: Element = div(id := "frontend-intro-demo", GuideStyles.frame)(
-      div(BootstrapStyles.inputGroup, GuideStyles.blockOnMobile)(
-        NumberInput.debounced(minimum)(id := "minimum", BootstrapStyles.formControl),
-        span(BootstrapStyles.inputGroupAddon)(" <= "),
-        NumberInput.debounced(between)(id := "between", BootstrapStyles.formControl),
-        span(BootstrapStyles.inputGroupAddon)(" <= "),
-        NumberInput.debounced(maximum)(id := "maximum", BootstrapStyles.formControl),
-        div(BootstrapStyles.inputGroupBtn)(
-          button(id := "randomize", BootstrapStyles.btn, BootstrapStyles.btnPrimary)(onclick :+= ((ev: MouseEvent) => {
+      div(BootstrapStyles.Form.inputGroup, GuideStyles.blockOnMobile)(
+        NumberInput.debounced(minimum)(id := "minimum", BootstrapStyles.Form.formControl),
+        span(BootstrapStyles.Form.inputGroupAddon)(" <= "),
+        NumberInput.debounced(between)(id := "between", BootstrapStyles.Form.formControl),
+        span(BootstrapStyles.Form.inputGroupAddon)(" <= "),
+        NumberInput.debounced(maximum)(id := "maximum", BootstrapStyles.Form.formControl),
+        div(BootstrapStyles.Form.inputGroupBtn)(
+          button(id := "randomize", BootstrapStyles.Button.btn, BootstrapStyles.Button.btnPrimary)(onclick :+= ((_: MouseEvent) => {
             presenter.randomize()
             true
           }))("Randomize")

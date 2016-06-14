@@ -1,9 +1,9 @@
 package io.udash.web.guide.views.rpc.demos
 
-import io.udash.web.guide.Context
 import io.udash._
+import io.udash.bootstrap.BootstrapStyles
+import io.udash.web.guide.Context
 import io.udash.web.guide.demos.rpc.GenCodecServerRPC
-import io.udash.web.guide.styles.BootstrapStyles
 import io.udash.web.guide.styles.partials.GuideStyles
 import io.udash.wrappers.jquery._
 import org.scalajs.dom._
@@ -26,8 +26,8 @@ trait GenCodecsDemoModel {
 }
 
 class GenCodecsDemoComponent extends Component {
-  import io.udash.web.guide.demos.rpc.GenCodecServerRPC._
   import Context._
+  import io.udash.web.guide.demos.rpc.GenCodecServerRPC._
   
   override def getTemplate: Element = GenCodecsDemoViewPresenter()
 
@@ -82,7 +82,7 @@ class GenCodecsDemoComponent extends Component {
     import scalacss.ScalatagsCss._
 
     def render: Element = span(GuideStyles.frame)(
-      button(id := "gencodec-demo", BootstrapStyles.btn, BootstrapStyles.btnPrimary)(onclick :+= ((ev: MouseEvent) => {
+      button(id := "gencodec-demo", BootstrapStyles.Button.btn, BootstrapStyles.Button.btnPrimary)(onclick :+= ((ev: MouseEvent) => {
         presenter.onButtonClick(jQ(ev.target))
         true
       }))("Send request"),
