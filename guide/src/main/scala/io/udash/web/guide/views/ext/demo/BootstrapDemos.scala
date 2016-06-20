@@ -2,7 +2,7 @@ package io.udash.web.guide.views.ext.demo
 
 import io.udash._
 import io.udash.bootstrap.BootstrapStyles
-import io.udash.bootstrap.button.{ButtonSize, ButtonStyle, UdashButton}
+import io.udash.bootstrap.button._
 import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
 import io.udash.web.commons.styles.GlobalStyles
@@ -142,6 +142,65 @@ object BootstrapDemos extends StrictLogging {
           span(s"$name: ", bind(button.active), br)
         }).toSeq
       )
+    ).render
+  }
+
+  def checkboxButtons(): dom.Element = {
+    import UdashButtonGroup._
+    val options = SeqProperty[CheckboxModel](Seq(
+      DefaultCheckboxModel("Checkbox 1 (pre-checked)", true),
+      DefaultCheckboxModel("Checkbox 2", false),
+      DefaultCheckboxModel("Checkbox 3", false)
+    ))
+    div(StyleUtils.center, GuideStyles.frame)(
+      div(BootstrapStyles.Well.well)(
+        UdashButtonGroup.checkboxes(options)(defaultCheckboxFactory).render
+      ),
+      h4("Is active: "),
+      div(BootstrapStyles.Well.well)(
+        repeat(options)(option => {
+          val model = option.asModel
+          val name = model.subProp(_.text)
+          val checked = model.subProp(_.checked)
+          div(bind(name), ": ", bind(checked)).render
+        })
+      )
+    ).render
+  }
+
+  def radioButtons(): dom.Element = {
+    import UdashButtonGroup._
+    val options = SeqProperty[CheckboxModel](Seq(
+      DefaultCheckboxModel("Radio 1 (preselected)", true),
+      DefaultCheckboxModel("Radio 2", false),
+      DefaultCheckboxModel("Radio 3", false)
+    ))
+    div(StyleUtils.center, GuideStyles.frame)(
+      div(BootstrapStyles.Well.well)(
+        UdashButtonGroup.radio(options, justified = true).render
+      ),
+      h4("Is active: "),
+      div(BootstrapStyles.Well.well)(
+        repeat(options)(option => {
+          val model = option.asModel
+          val name = model.subProp(_.text)
+          val checked = model.subProp(_.checked)
+          div(bind(name), ": ", bind(checked)).render
+        })
+      )
+    ).render
+  }
+
+  def buttonToolbar(): dom.Element = {
+    val groups = SeqProperty[Seq[Int]](Seq[Seq[Int]](1 to 4, 5 to 7, 8 to 8))
+    div(StyleUtils.center, GuideStyles.frame)(
+      UdashButtonToolbar(groups, (p: CastableProperty[Seq[Int]]) => {
+        val range = p.asSeq[Int]
+        UdashButtonGroup(range, size = ButtonSize.Large)(element =>
+          UdashButton()(element.get).render
+        ).render
+      }
+      ).render
     ).render
   }
 }

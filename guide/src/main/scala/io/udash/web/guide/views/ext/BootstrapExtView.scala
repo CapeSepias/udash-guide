@@ -146,6 +146,17 @@ class BootstrapExtView extends View {
     CodeBlock(
       s"""???""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.checkboxButtons(),
+    p("..."),
+    CodeBlock(
+      s"""???""".stripMargin
+    )(GuideStyles),
+    BootstrapDemos.radioButtons(),
+    p("..."),
+    CodeBlock(
+      s"""???""".stripMargin
+    )(GuideStyles),
+    BootstrapDemos.buttonToolbar(),
     h3("Button dropdowns"),
     p("..."),
     CodeBlock(
