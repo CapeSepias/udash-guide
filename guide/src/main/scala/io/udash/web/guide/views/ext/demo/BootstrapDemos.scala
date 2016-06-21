@@ -5,6 +5,7 @@ import io.udash.bootstrap.BootstrapStyles
 import io.udash.bootstrap.button._
 import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
+import io.udash.properties.SeqProperty
 import io.udash.web.commons.styles.GlobalStyles
 import io.udash.web.guide.styles.partials.GuideStyles
 import io.udash.web.guide.styles.utils.StyleUtils
@@ -62,8 +63,8 @@ object BootstrapDemos extends StrictLogging {
     }, 5000)
     window.setTimeout(() => window.clearInterval(appendHandler), 60000)
 
-    val dropdown = UdashDropdown(items)("Dropdown", BootstrapStyles.Button.btnPrimary)
-    val dropup = UdashDropdown.dropup(items)("Dropup")
+    val dropdown = UdashDropdown(items)("Dropdown ", BootstrapStyles.Button.btnPrimary)
+    val dropup = UdashDropdown.dropup(items)("Dropup ")
     dropdown.listen(listener)
     dropup.listen(listener)
 
@@ -109,7 +110,7 @@ object BootstrapDemos extends StrictLogging {
 
     div(StyleUtils.center, GuideStyles.frame)(
       push.render,
-      div(BootstrapStyles.Well.well, GlobalStyles.centerBlock)(
+      div(GlobalStyles.centerBlock)(
         buttons.map(b => b.render)
       ),
       h4("Clicks: "),
@@ -133,7 +134,7 @@ object BootstrapDemos extends StrictLogging {
     )
 
     div(StyleUtils.center, GuideStyles.frame)(
-      div(BootstrapStyles.Well.well, GlobalStyles.centerBlock)(
+      div(GlobalStyles.centerBlock)(
         buttons.values.map(b => b.render).toSeq
       ),
       h4("Is active: "),
@@ -145,6 +146,29 @@ object BootstrapDemos extends StrictLogging {
     ).render
   }
 
+  def staticButtonsGroup(): dom.Element = {
+    div(StyleUtils.center, GuideStyles.frame)(
+      UdashButtonGroup(vertical = true)(
+        UdashButton(style = ButtonStyle.Primary)("Button 1").render,
+        UdashButton()("Button 2").render,
+        UdashButton()("Button 3").render
+      ).render
+    ).render
+  }
+
+  def buttonToolbar(): dom.Element = {
+    val groups = SeqProperty[Seq[Int]](Seq[Seq[Int]](1 to 4, 5 to 7, 8 to 8))
+    div(StyleUtils.center, GuideStyles.frame)(
+      UdashButtonToolbar.reactive(groups, (p: CastableProperty[Seq[Int]]) => {
+        val range = p.asSeq[Int]
+        UdashButtonGroup.reactive(range, size = ButtonSize.Large)(element =>
+          UdashButton()(element.get).render
+        ).render
+      }
+      ).render
+    ).render
+  }
+
   def checkboxButtons(): dom.Element = {
     import UdashButtonGroup._
     val options = SeqProperty[CheckboxModel](Seq(
@@ -153,9 +177,7 @@ object BootstrapDemos extends StrictLogging {
       DefaultCheckboxModel("Checkbox 3", false)
     ))
     div(StyleUtils.center, GuideStyles.frame)(
-      div(BootstrapStyles.Well.well)(
-        UdashButtonGroup.checkboxes(options)(defaultCheckboxFactory).render
-      ),
+      UdashButtonGroup.checkboxes(options)(defaultCheckboxFactory).render,
       h4("Is active: "),
       div(BootstrapStyles.Well.well)(
         repeat(options)(option => {
@@ -176,9 +198,7 @@ object BootstrapDemos extends StrictLogging {
       DefaultCheckboxModel("Radio 3", false)
     ))
     div(StyleUtils.center, GuideStyles.frame)(
-      div(BootstrapStyles.Well.well)(
-        UdashButtonGroup.radio(options, justified = true).render
-      ),
+      UdashButtonGroup.radio(options, justified = true).render,
       h4("Is active: "),
       div(BootstrapStyles.Well.well)(
         repeat(options)(option => {
@@ -191,15 +211,23 @@ object BootstrapDemos extends StrictLogging {
     ).render
   }
 
-  def buttonToolbar(): dom.Element = {
-    val groups = SeqProperty[Seq[Int]](Seq[Seq[Int]](1 to 4, 5 to 7, 8 to 8))
+  def buttonDropdown(): dom.Element = {
+    val items = SeqProperty[DefaultDropdownItem](Seq(
+      UdashDropdown.DropdownHeader("Start"),
+      UdashDropdown.DropdownLink("Intro", Url("#")),
+      UdashDropdown.DropdownDisabled(UdashDropdown.DropdownLink("Test Disabled", Url("#"))),
+      UdashDropdown.DropdownDivider,
+      UdashDropdown.DropdownHeader("End"),
+      UdashDropdown.DropdownLink("Intro", Url("#"))
+    ))
     div(StyleUtils.center, GuideStyles.frame)(
-      UdashButtonToolbar(groups, (p: CastableProperty[Seq[Int]]) => {
-        val range = p.asSeq[Int]
-        UdashButtonGroup(range, size = ButtonSize.Large)(element =>
-          UdashButton()(element.get).render
-        ).render
-      }
+      UdashButtonToolbar(
+        UdashButtonGroup()(
+          UdashButton()("Button").render,
+          UdashDropdown(items)().render,
+          UdashDropdown.dropup(items)().render
+        ).render,
+        UdashDropdown(items)("Dropdown ").render
       ).render
     ).render
   }

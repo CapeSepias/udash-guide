@@ -142,26 +142,88 @@ class BootstrapExtView extends View {
     )(GuideStyles),
     BootstrapDemos.toggleButton(),
     h3("Button groups"),
-    p("..."),
+    p("There are many ways of creating a button group. The first example presents static API usage:"),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""UdashButtonGroup(vertical = true)(
+         |  UdashButton(style = ButtonStyle.Primary)("Button 1").render,
+         |  UdashButton()("Button 2").render,
+         |  UdashButton()("Button 3").render
+         |).render""".stripMargin
     )(GuideStyles),
-    BootstrapDemos.checkboxButtons(),
-    p("..."),
+    BootstrapDemos.staticButtonsGroup(),
+    p("It is also possible to create reactive groups and toolbars:"),
     CodeBlock(
-      s"""???""".stripMargin
-    )(GuideStyles),
-    BootstrapDemos.radioButtons(),
-    p("..."),
-    CodeBlock(
-      s"""???""".stripMargin
+      s"""val groups = SeqProperty[Seq[Int]](Seq[Seq[Int]](1 to 4, 5 to 7, 8 to 8))
+         |UdashButtonToolbar.reactive(groups, (p: CastableProperty[Seq[Int]]) => {
+         |  val range = p.asSeq[Int]
+         |  UdashButtonGroup.reactive(range, size = ButtonSize.Large)(element =>
+         |    UdashButton()(element.get).render
+         |  ).render
+         |}).render""".stripMargin
     )(GuideStyles),
     BootstrapDemos.buttonToolbar(),
-    h3("Button dropdowns"),
-    p("..."),
+    p("Use ", i("checkboxes"), " method in order to create a group of buttons behaving as checkboxes:"),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""import UdashButtonGroup._
+         |val options = SeqProperty[CheckboxModel](Seq(
+         |  DefaultCheckboxModel("Checkbox 1 (pre-checked)", true),
+         |  DefaultCheckboxModel("Checkbox 2", false),
+         |  DefaultCheckboxModel("Checkbox 3", false)
+         |))
+         |div(
+         |  UdashButtonGroup.checkboxes(options)(defaultCheckboxFactory).render,
+         |  h4("Is active: "),
+         |  div(BootstrapStyles.Well.well)(
+         |    repeat(options)(option => {
+         |      val model = option.asModel
+         |      val name = model.subProp(_.text)
+         |      val checked = model.subProp(_.checked)
+         |      div(bind(name), ": ", bind(checked)).render
+         |    })
+         |  )
+         |).render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.checkboxButtons(),
+    p("The following example presents a group of buttons behaving as radio buttons:"),
+    CodeBlock(
+      s"""import UdashButtonGroup._
+         |val options = SeqProperty[CheckboxModel](Seq(
+         |  DefaultCheckboxModel("Radio 1 (preselected)", true),
+         |  DefaultCheckboxModel("Radio 2", false),
+         |  DefaultCheckboxModel("Radio 3", false)
+         |))
+         |div(
+         |  UdashButtonGroup.radio(options, justified = true).render,
+         |  h4("Is active: "),
+         |  div(BootstrapStyles.Well.well)(
+         |    repeat(options)(option => {
+         |      val model = option.asModel
+         |      val name = model.subProp(_.text)
+         |      val checked = model.subProp(_.checked)
+         |      div(bind(name), ": ", bind(checked)).render
+         |    })
+         |  )
+         |).render""".stripMargin
+    )(GuideStyles),
+    BootstrapDemos.radioButtons(),
+    h3("Button dropdowns"),
+    p("The ", i("UdashDropdown"), " component can be used as part of a button group."),
+    CodeBlock(
+      s"""val items = SeqProperty[DefaultDropdownItem](Seq(
+         |  UdashDropdown.DropdownHeader("Start"),
+         |  UdashDropdown.DropdownLink("Intro", Url("#")),
+         |  UdashDropdown.DropdownDisabled(UdashDropdown.DropdownLink("Test Disabled", Url("#"))),
+         |))
+         |UdashButtonToolbar(
+         |  UdashButtonGroup()(
+         |    UdashButton()("Button").render,
+         |    UdashDropdown(items)().render,
+         |    UdashDropdown.dropup(items)().render
+         |  ).render,
+         |  UdashDropdown(items)("Dropdown ").render
+         |).render""".stripMargin
+    )(GuideStyles),
+    BootstrapDemos.buttonDropdown(),
     h3("Input groups"),
     p("..."),
     CodeBlock(
