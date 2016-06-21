@@ -5,6 +5,7 @@ import io.udash.bootstrap.BootstrapStyles
 import io.udash.bootstrap.button._
 import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
+import io.udash.bootstrap.utils.{UdashBadge, UdashLabel, UdashPageHeader}
 import io.udash.properties.SeqProperty
 import io.udash.web.commons.styles.GlobalStyles
 import io.udash.web.guide.styles.partials.GuideStyles
@@ -23,6 +24,9 @@ object BootstrapDemos extends StrictLogging {
 
   import JsDom.all._
   import scalacss.ScalatagsCss._
+
+  def forceBootstrapStyle(): dom.Element =
+    link(rel := "stylesheet", href := "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css").render
 
   def styles(): dom.Element =
     div(BootstrapStyles.row, GuideStyles.frame)(
@@ -229,6 +233,27 @@ object BootstrapDemos extends StrictLogging {
         ).render,
         UdashDropdown(items)("Dropdown ").render
       ).render
+    ).render
+  }
+
+  def labels(): dom.Element = {
+    div(StyleUtils.center, GuideStyles.frame)(
+      forceBootstrapStyle(),
+      UdashLabel("Default", GlobalStyles.smallMargin).render,
+      UdashLabel.primary("Primary", GlobalStyles.smallMargin).render,
+      UdashLabel.success("Success", GlobalStyles.smallMargin).render,
+      UdashLabel.info("Info", GlobalStyles.smallMargin).render,
+      UdashLabel.warning("Warning", GlobalStyles.smallMargin).render,
+      UdashLabel.danger("Danger", GlobalStyles.smallMargin).render
+    ).render
+  }
+
+  def badges(): dom.Element = {
+    val counter = Property(0)
+    window.setInterval(() => counter.set(counter.get + 1), 3000)
+    div(StyleUtils.center, GuideStyles.frame)(
+      forceBootstrapStyle(),
+      UdashButton(style = ButtonStyle.Primary, size = ButtonSize.Large)("Button ", UdashBadge(counter).render).render
     ).render
   }
 }

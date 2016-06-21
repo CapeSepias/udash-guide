@@ -250,24 +250,31 @@ class BootstrapExtView extends View {
       s"""???""".stripMargin
     )(GuideStyles),
     h3("Labels"),
-    p("..."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""UdashLabel("Default").render,
+         |UdashLabel.primary("Primary").render,
+         |UdashLabel.success("Success").render,
+         |UdashLabel.info("Info").render,
+         |UdashLabel.warning("Warning").render,
+         |UdashLabel.danger("Danger").render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.labels(),
     h3("Badges"),
-    p("..."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""val counter = Property(0)
+         |window.setInterval(() => counter.set(counter.get + 1), 3000)
+         |UdashButton(style = ButtonStyle.Primary, size = ButtonSize.Large)
+         |           ("Button", UdashBadge(counter).render).render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.badges(),
     h3("Jumbotron"),
     p("..."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""UdashJumbotron(h1("Header), "Content...").render""".stripMargin
     )(GuideStyles),
     h3("Page header"),
-    p("..."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""UdashPageHeader(h1("Header ", small("Subtext"))).render""".stripMargin
     )(GuideStyles),
     h3("Thumbnails"),
     p("..."),
