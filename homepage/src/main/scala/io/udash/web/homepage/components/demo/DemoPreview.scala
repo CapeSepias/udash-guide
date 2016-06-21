@@ -1,7 +1,6 @@
 package io.udash.web.homepage.components.demo
 
 import io.udash.web.commons.styles.GlobalStyles
-import io.udash.web.commons.styles.components.FooterStyles
 import io.udash.web.homepage.styles.partials.DemoStyles
 import org.scalajs.dom.raw.Element
 
@@ -152,7 +151,7 @@ object DemoPreview {
       lang.set(l)
 
     div(DemoStyles.demoIOWrapper)(
-      TextInput(name, `type` := "text", placeholder := "Type your name...", DemoStyles.demoInput, GlobalStyles.width100),
+      TextInput.debounced(name, `type` := "text", placeholder := "Type your name...", DemoStyles.demoInput, GlobalStyles.width100),
       div(DemoStyles.demoOutput)(
         span(translatedDynamic(Translations.udash.hello)(_.apply()))
       ),
