@@ -1,11 +1,11 @@
 package io.udash.web.guide.views.ext.demo
 
 import io.udash._
-import io.udash.bootstrap.BootstrapStyles
+import io.udash.bootstrap.{BootstrapStyles, UdashBootstrap}
 import io.udash.bootstrap.button._
 import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
-import io.udash.bootstrap.utils.{UdashBadge, UdashLabel, UdashPageHeader}
+import io.udash.bootstrap.utils.{Icons, UdashBadge, UdashLabel, UdashPageHeader}
 import io.udash.properties.SeqProperty
 import io.udash.web.commons.styles.GlobalStyles
 import io.udash.web.guide.styles.partials.GuideStyles
@@ -26,7 +26,7 @@ object BootstrapDemos extends StrictLogging {
   import scalacss.ScalatagsCss._
 
   def forceBootstrapStyle(): dom.Element =
-    link(rel := "stylesheet", href := "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css").render
+    UdashBootstrap.loadBootstrapStyles()
 
   def styles(): dom.Element =
     div(BootstrapStyles.row, GuideStyles.frame)(
@@ -42,6 +42,24 @@ object BootstrapDemos extends StrictLogging {
         ".col-xs-6", br,
         "Subsequent columns continue along the new line."
       )
+    ).render
+
+  def icons(): dom.Element =
+    div(GuideStyles.frame)(
+      UdashBootstrap.loadFontAwesome(),
+      UdashButtonToolbar(
+        UdashButtonGroup()(
+          UdashButton()(Icons.Glyphicon.alignLeft).render,
+          UdashButton()(Icons.Glyphicon.alignCenter).render,
+          UdashButton()(Icons.Glyphicon.alignRight).render,
+          UdashButton()(Icons.Glyphicon.alignJustify).render
+        ).render,
+        UdashButtonGroup()(
+          UdashButton()(Icons.FontAwesome.bitcoin).render,
+          UdashButton()(Icons.FontAwesome.euro).render,
+          UdashButton()(Icons.FontAwesome.dollar).render
+        ).render
+      ).render
     ).render
 
   def dropdown(): dom.Element = {

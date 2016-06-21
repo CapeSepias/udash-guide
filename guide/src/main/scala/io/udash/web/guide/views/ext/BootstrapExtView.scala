@@ -47,10 +47,24 @@ class BootstrapExtView extends View {
     h2("Components"),
     p("..."),
     h3("Glyphicons & FontAwesome"),
-    p("..."),
+    p("The icons from ", i("Glyphicons"), " and ", i("FontAwesome"), " packages are accessible in ", i("Icons"), " object."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""UdashBootstrap.loadFontAwesome(),
+         |UdashButtonToolbar(
+         |  UdashButtonGroup()(
+         |    UdashButton()(Icons.Glyphicon.alignLeft).render,
+         |    UdashButton()(Icons.Glyphicon.alignCenter).render,
+         |    UdashButton()(Icons.Glyphicon.alignRight).render,
+         |    UdashButton()(Icons.Glyphicon.alignJustify).render
+         |  ).render,
+         |  UdashButtonGroup()(
+         |    UdashButton()(Icons.FontAwesome.bitcoin).render,
+         |    UdashButton()(Icons.FontAwesome.euro).render,
+         |    UdashButton()(Icons.FontAwesome.dollar).render
+         |  ).render
+         |).render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.icons(),
     h3("Dropdowns"),
     p("You can create dynamic dropdowns using ", i("SeqProperty"), "-based ", i("UdashDropdown"),
       ". It allows listening on item selection and using custom item renderers."),
