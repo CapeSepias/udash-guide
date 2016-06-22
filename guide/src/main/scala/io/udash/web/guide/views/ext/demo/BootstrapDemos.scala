@@ -6,7 +6,7 @@ import io.udash.bootstrap.{BootstrapStyles, UdashBootstrap}
 import io.udash.bootstrap.button._
 import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
-import io.udash.bootstrap.pagination.Pagination
+import io.udash.bootstrap.pagination.UdashPagination
 import io.udash.bootstrap.utils.{Icons, UdashBadge, UdashLabel, UdashPageHeader}
 import io.udash.properties.SeqProperty
 import io.udash.web.commons.styles.GlobalStyles
@@ -257,7 +257,7 @@ object BootstrapDemos extends StrictLogging {
   }
 
   def pagination(): dom.Element = {
-    import Pagination._
+    import UdashPagination._
     import Context._
 
     val showArrows = Property(true)
@@ -269,10 +269,10 @@ object BootstrapDemos extends StrictLogging {
       DefaultPage((idx+1).toString, Url(applicationInstance.currentState.url))
     ))
     val selected = Property(0)
-    val pagination = Pagination(
+    val pagination = UdashPagination(
       showArrows = showArrows, highlightActive = highlightActive
-    )(pages, selected)(Pagination.defaultPageFactory)
-    val pager = Pagination.pager()(pages, selected)(Pagination.defaultPageFactory)
+    )(pages, selected)(defaultPageFactory)
+    val pager = UdashPagination.pager()(pages, selected)(defaultPageFactory)
     div(StyleUtils.center, GuideStyles.frame)(
       div("Selected page index: ", bind(selected)),
       div(
@@ -326,7 +326,8 @@ object BootstrapDemos extends StrictLogging {
       UdashAlert.danger("danger").render
     ).render
     val create = UdashButton(
-      size = ButtonSize.Large
+      size = ButtonSize.Large,
+      block = true
     )("Create dismissible alert")
     create.listen { case _ => alerts.appendChild(randomDismissible()) }
     div(StyleUtils.center, GuideStyles.frame)(

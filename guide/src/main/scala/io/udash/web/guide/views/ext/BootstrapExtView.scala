@@ -260,7 +260,7 @@ class BootstrapExtView extends View {
     )(GuideStyles),
     h3("Pagination"),
     CodeBlock(
-      s"""import Pagination._
+      s"""import UdashPagination._
          |import Context._
          |
          |val showArrows = Property(true)
@@ -272,10 +272,10 @@ class BootstrapExtView extends View {
          |  DefaultPage((idx+1).toString, Url(applicationInstance.currentState.url))
          |))
          |val selected = Property(0)
-         |val pagination = Pagination(
+         |val pagination = UdashPagination(
          |  showArrows = showArrows, highlightActive = highlightActive
-         |)(pages, selected)(Pagination.defaultPageFactory)
-         |val pager = Pagination.pager()(pages, selected)(Pagination.defaultPageFactory)
+         |)(pages, selected)(defaultPageFactory)
+         |val pager = UdashPagination.pager()(pages, selected)(defaultPageFactory)
          |div(StyleUtils.center, GuideStyles.frame)(
          |  div("Selected page index: ", bind(selected)),
          |  div(
@@ -322,12 +322,13 @@ class BootstrapExtView extends View {
       s"""???""".stripMargin
     )(GuideStyles),
     h3("Alerts"),
-    p("The", i("UdashAlert")," component supports both regular and dismissible Bootstrap alerts with typesafe styling and ",
+    p("The ", i("UdashAlert")," component supports both regular and dismissible Bootstrap alerts with typesafe styling and ",
     i("Property"),"-based dismissal mechanism."),
     CodeBlock(
       s"""|val styles = Seq(AlertStyle.Info, AlertStyle.Danger,
          |  AlertStyle.Success, AlertStyle.Warning)
          |val dismissed = SeqProperty[String](Seq.empty)
+         |
          |def randomDismissible(): dom.Element = {
          |  val title = randomString()
          |  val alert = UdashAlert.dismissible(
@@ -336,15 +337,18 @@ class BootstrapExtView extends View {
          |  alert.dismissed.listen(_ => dismissed.append(title))
          |  alert.render
          |}
+         |
          |val alerts = div(BootstrapStyles.Well.well)(
          |  UdashAlert.info("info").render,
          |  UdashAlert.success("success").render,
          |  UdashAlert.warning("warning").render,
          |  UdashAlert.danger("danger").render
          |).render
+         |
          |val create = UdashButton(
          |  size = ButtonSize.Large
          |)("Create dismissible alert")
+         |
          |create.listen { case _ => alerts.appendChild(randomDismissible()) }
          |div(StyleUtils.center)(
          |  create.render,
