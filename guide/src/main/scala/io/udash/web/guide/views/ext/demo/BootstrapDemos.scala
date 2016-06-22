@@ -2,12 +2,12 @@ package io.udash.web.guide.views.ext.demo
 
 import io.udash._
 import io.udash.bootstrap.alert.{AlertStyle, UdashAlert}
-import io.udash.bootstrap.{BootstrapStyles, UdashBootstrap}
 import io.udash.bootstrap.button._
 import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
 import io.udash.bootstrap.pagination.UdashPagination
-import io.udash.bootstrap.utils.{Icons, UdashBadge, UdashLabel, UdashPageHeader}
+import io.udash.bootstrap.utils._
+import io.udash.bootstrap.{BootstrapStyles, UdashBootstrap}
 import io.udash.properties.SeqProperty
 import io.udash.web.commons.styles.GlobalStyles
 import io.udash.web.guide.styles.partials.GuideStyles
@@ -16,6 +16,7 @@ import io.udash.web.guide.{BootstrapExtState, Context, IntroState}
 import org.scalajs.dom
 
 import scala.collection.mutable
+import scala.language.postfixOps
 import scala.util.Random
 import scalatags.JsDom
 
@@ -24,11 +25,24 @@ object BootstrapDemos extends StrictLogging {
   import io.udash.web.guide.Context._
   import org.scalajs.dom._
 
-  import JsDom.all._
+  import scalacss.Defaults._
   import scalacss.ScalatagsCss._
 
-  def forceBootstrapStyle(): dom.Element =
-    UdashBootstrap.loadBootstrapStyles()
+  object ResetGuideStyles extends StyleSheet.Inline {
+    import dsl._
+    val reset = style(
+      unsafeChild("a")(
+        color.inherit,
+        &.hover(color.inherit),
+        &.visited(color.inherit)
+      ),
+
+      fontFamily :=! "\"Helvetica Neue\",Helvetica,Arial,sans-serif",
+      fontSize(14 px)
+    )
+  }
+
+  import JsDom.all._
 
   def styles(): dom.Element =
     div(BootstrapStyles.row, GuideStyles.frame)(
@@ -256,9 +270,26 @@ object BootstrapDemos extends StrictLogging {
     ).render
   }
 
+  def breadcrumbs(): dom.Element = {
+    import io.udash.bootstrap.utils.UdashBreadcrumbs._
+
+    val pages = SeqProperty[Breadcrumb](Seq(
+      DefaultBreadcrumb("Udash", Url("http://udash.io/")),
+      DefaultBreadcrumb("Dev's Guide", Url("http://guide.udash.io/")),
+      DefaultBreadcrumb("Extensions", Url("http://guide.udash.io/")),
+      DefaultBreadcrumb("Bootstrap wrapper", Url("http://guide.udash.io/ext/bootstrap"))
+    ))
+
+    val selected = pages.transform((pages: Seq[_]) => pages.size - 1)
+    val breadcrumbs = UdashBreadcrumbs(pages, selected)(defaultPageFactory)
+    div(StyleUtils.center, GuideStyles.frame)(
+      div(ResetGuideStyles.reset)(breadcrumbs.render)
+    ).render
+  }
+
   def pagination(): dom.Element = {
-    import UdashPagination._
     import Context._
+    import UdashPagination._
 
     val showArrows = Property(true)
     val highlightActive = Property(true)
@@ -274,27 +305,30 @@ object BootstrapDemos extends StrictLogging {
     )(pages, selected)(defaultPageFactory)
     val pager = UdashPagination.pager()(pages, selected)(defaultPageFactory)
     div(StyleUtils.center, GuideStyles.frame)(
-      div("Selected page index: ", bind(selected)),
       div(
         UdashButtonGroup()(
           toggleArrows.render,
           toggleHighlight.render
         ).render
       ),
-      div(GlobalStyles.centerBlock)(pagination.render),
-      pager.render
+      div("Selected page index: ", bind(selected)),
+      div(ResetGuideStyles.reset)(
+        div(GlobalStyles.centerBlock)(pagination.render),
+        pager.render
+      )
     ).render
   }
 
   def labels(): dom.Element = {
     div(StyleUtils.center, GuideStyles.frame)(
-      forceBootstrapStyle(),
-      UdashLabel("Default", GlobalStyles.smallMargin).render,
-      UdashLabel.primary("Primary", GlobalStyles.smallMargin).render,
-      UdashLabel.success("Success", GlobalStyles.smallMargin).render,
-      UdashLabel.info("Info", GlobalStyles.smallMargin).render,
-      UdashLabel.warning("Warning", GlobalStyles.smallMargin).render,
-      UdashLabel.danger("Danger", GlobalStyles.smallMargin).render
+      div(ResetGuideStyles.reset)(
+        UdashLabel("Default", GlobalStyles.smallMargin).render,
+        UdashLabel.primary("Primary", GlobalStyles.smallMargin).render,
+        UdashLabel.success("Success", GlobalStyles.smallMargin).render,
+        UdashLabel.info("Info", GlobalStyles.smallMargin).render,
+        UdashLabel.warning("Warning", GlobalStyles.smallMargin).render,
+        UdashLabel.danger("Danger", GlobalStyles.smallMargin).render
+      )
     ).render
   }
 
@@ -302,8 +336,9 @@ object BootstrapDemos extends StrictLogging {
     val counter = Property(0)
     window.setInterval(() => counter.set(counter.get + 1), 3000)
     div(StyleUtils.center, GuideStyles.frame)(
-      forceBootstrapStyle(),
-      UdashButton(style = ButtonStyle.Primary, size = ButtonSize.Large)("Button ", UdashBadge(counter).render).render
+      div(ResetGuideStyles.reset)(
+        UdashButton(style = ButtonStyle.Primary, size = ButtonSize.Large)("Button ", UdashBadge(counter).render).render
+      )
     ).render
   }
 

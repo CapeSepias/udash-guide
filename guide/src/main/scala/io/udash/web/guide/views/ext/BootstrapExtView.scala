@@ -5,18 +5,24 @@ import io.udash.web.commons.components.CodeBlock
 import io.udash.web.guide._
 import io.udash.web.guide.styles.partials.GuideStyles
 import io.udash.web.guide.views.ext.demo.BootstrapDemos
+import io.udash.web.guide.views.ext.demo.BootstrapDemos.ResetGuideStyles
 import io.udash.web.guide.views.{References, Versions}
 import org.scalajs.dom
+import org.scalajs.dom.raw.HTMLStyleElement
 
 import scalatags.JsDom
+import scalatags.JsDom.TypedTag
 
 case object BootstrapExtViewPresenter extends DefaultViewPresenterFactory[BootstrapExtState.type](() => new BootstrapExtView)
 
 
 class BootstrapExtView extends View {
   import JsDom.all._
+  import scalacss.ScalatagsCss._
+  import scalacss.Defaults._
 
   override def getTemplate: dom.Element = div(
+    ResetGuideStyles.render[TypedTag[HTMLStyleElement]],
     h1("Udash Bootstrap wrapper"),
     p("..."),
     h2("First steps"),
@@ -254,10 +260,21 @@ class BootstrapExtView extends View {
       s"""???""".stripMargin
     )(GuideStyles),
     h3("Breadcrumbs"),
-    p("..."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""
+         |import io.udash.bootstrap.utils.UdashBreadcrumbs._
+         |
+         |val pages = SeqProperty[Breadcrumb](Seq(
+         |  DefaultBreadcrumb("Udash", Url("http://udash.io/")),
+         |  DefaultBreadcrumb("Dev's Guide", Url("http://guide.udash.io/")),
+         |  DefaultBreadcrumb("Extensions", Url("http://guide.udash.io/")),
+         |  DefaultBreadcrumb("Bootstrap wrapper", Url("http://guide.udash.io/ext/bootstrap"))
+         |))
+         |val selected = pages.transform((pages: Seq[_]) => pages.size - 1)
+         |val breadcrumbs = UdashBreadcrumbs(pages, selected)(defaultPageFactory)
+         |breadcrumbs.render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.breadcrumbs(),
     h3("Pagination"),
     CodeBlock(
       s"""import UdashPagination._
