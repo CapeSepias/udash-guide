@@ -322,9 +322,40 @@ class BootstrapExtView extends View {
       s"""???""".stripMargin
     )(GuideStyles),
     h3("Alerts"),
-    p("..."),
+    p("The", i("UdashAlert")," component supports both regular and dismissible Bootstrap alerts with typesafe styling and ",
+    i("Property"),"-based dismissal mechanism."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""|val styles = Seq(AlertStyle.Info, AlertStyle.Danger,
+         |  AlertStyle.Success, AlertStyle.Warning)
+         |val dismissed = SeqProperty[String](Seq.empty)
+         |def randomDismissible(): dom.Element = {
+         |  val title = randomString()
+         |  val alert = UdashAlert.dismissible(
+         |    styles(Random.nextInt(styles.size))
+         |  )(title)
+         |  alert.dismissed.listen(_ => dismissed.append(title))
+         |  alert.render
+         |}
+         |val alerts = div(BootstrapStyles.Well.well)(
+         |  UdashAlert.info("info").render,
+         |  UdashAlert.success("success").render,
+         |  UdashAlert.warning("warning").render,
+         |  UdashAlert.danger("danger").render
+         |).render
+         |val create = UdashButton(
+         |  size = ButtonSize.Large
+         |)("Create dismissible alert")
+         |create.listen { case _ => alerts.appendChild(randomDismissible()) }
+         |div(StyleUtils.center)(
+         |  create.render,
+         |  alerts,
+         |  h4("Dismissed: "),
+         |  produce(dismissed)(seq =>
+         |    ul(BootstrapStyles.Well.well)(seq.map(click =>
+         |      li(click)
+         |    ): _*).render
+         |  )
+         |).render""".stripMargin
     )(GuideStyles),
     BootstrapDemos.alerts(),
     h3("Progress bars"),

@@ -308,11 +308,14 @@ object BootstrapDemos extends StrictLogging {
   }
 
   def alerts(): dom.Element = {
-    val styles = Seq(AlertStyle.Info, AlertStyle.Danger, AlertStyle.Success, AlertStyle.Warning)
+    val styles = Seq(AlertStyle.Info, AlertStyle.Danger,
+      AlertStyle.Success, AlertStyle.Warning)
     val dismissed = SeqProperty[String](Seq.empty)
     def randomDismissible(): dom.Element = {
       val title = randomString()
-      val alert = UdashAlert.dismissible(styles(Random.nextInt(styles.size)))(title)
+      val alert = UdashAlert.dismissible(
+        styles(Random.nextInt(styles.size))
+      )(title)
       alert.dismissed.listen(_ => dismissed.append(title))
       alert.render
     }
@@ -322,7 +325,9 @@ object BootstrapDemos extends StrictLogging {
       UdashAlert.warning("warning").render,
       UdashAlert.danger("danger").render
     ).render
-    val create = UdashButton(size = ButtonSize.Large)("Create dismissible alert")
+    val create = UdashButton(
+      size = ButtonSize.Large
+    )("Create dismissible alert")
     create.listen { case _ => alerts.appendChild(randomDismissible()) }
     div(StyleUtils.center, GuideStyles.frame)(
       create.render,

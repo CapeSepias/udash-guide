@@ -17,10 +17,10 @@ class ApplicationServer(val port: Int, homepageResourceBase: String, guideResour
 
   def stop() = server.stop()
 
-  private val homepage = createContextHandler(Array("udash.io", "www.udash.io", "127.0.0.1"))
-  private val guide = createContextHandler(Array("guide.udash.io", "www.guide.udash.io", "127.0.0.2"))
+  //private val homepage = createContextHandler(Array("udash.io", "www.udash.io", "127.0.0.1"))
+  private val guide = createContextHandler(Array("localhost"))
 
-  homepage.addServlet(createStaticHandler(homepageResourceBase), "/*")
+  //homepage.addServlet(createStaticHandler(homepageResourceBase), "/*")
   guide.addServlet(createStaticHandler(guideResourceBase), "/*")
 
   private val atmosphereHolder = {
@@ -38,7 +38,7 @@ class ApplicationServer(val port: Int, homepageResourceBase: String, guideResour
   guide.addServlet(atmosphereHolder, "/atm/*")
 
   val contexts = new ContextHandlerCollection
-  contexts.setHandlers(Array(homepage, guide))
+  contexts.setHandlers(Array(guide))
   server.setHandler(contexts)
 
   private def createContextHandler(hosts: Array[String]): ServletContextHandler = {
