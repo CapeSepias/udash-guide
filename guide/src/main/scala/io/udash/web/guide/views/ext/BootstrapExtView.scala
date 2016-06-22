@@ -326,6 +326,7 @@ class BootstrapExtView extends View {
     CodeBlock(
       s"""???""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.alerts(),
     h3("Progress bars"),
     p("..."),
     CodeBlock(

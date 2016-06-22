@@ -1,6 +1,7 @@
 package io.udash.web.guide.views.ext.demo
 
 import io.udash._
+import io.udash.bootstrap.alert.{AlertStyle, UdashAlert}
 import io.udash.bootstrap.{BootstrapStyles, UdashBootstrap}
 import io.udash.bootstrap.button._
 import io.udash.bootstrap.dropdown.UdashDropdown
@@ -305,4 +306,35 @@ object BootstrapDemos extends StrictLogging {
       UdashButton(style = ButtonStyle.Primary, size = ButtonSize.Large)("Button ", UdashBadge(counter).render).render
     ).render
   }
+
+  def alerts(): dom.Element = {
+    val styles = Seq(AlertStyle.Info, AlertStyle.Danger, AlertStyle.Success, AlertStyle.Warning)
+    val dismissed = SeqProperty[String](Seq.empty)
+    def randomDismissible(): dom.Element = {
+      val title = randomString()
+      val alert = UdashAlert.dismissible(styles(Random.nextInt(styles.size)))(title)
+      alert.dismissed.listen(_ => dismissed.append(title))
+      alert.render
+    }
+    val alerts = div(BootstrapStyles.Well.well, GlobalStyles.centerBlock)(
+      UdashAlert.info("info").render,
+      UdashAlert.success("success").render,
+      UdashAlert.warning("warning").render,
+      UdashAlert.danger("danger").render
+    ).render
+    val create = UdashButton(size = ButtonSize.Large)("Create dismissible alert")
+    create.listen { case _ => alerts.appendChild(randomDismissible()) }
+    div(StyleUtils.center, GuideStyles.frame)(
+      create.render,
+      alerts,
+      h4("Dismissed: "),
+      produce(dismissed)(seq =>
+        ul(BootstrapStyles.Well.well)(seq.map(click =>
+          li(click)
+        ): _*).render
+      )
+    ).render
+  }
+
+  private def randomString(): String = BigInt.probablePrime(100, Random).toString(36)
 }
