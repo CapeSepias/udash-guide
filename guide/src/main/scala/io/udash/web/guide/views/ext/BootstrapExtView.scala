@@ -259,10 +259,36 @@ class BootstrapExtView extends View {
       s"""???""".stripMargin
     )(GuideStyles),
     h3("Pagination"),
-    p("..."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""import Pagination._
+         |import Context._
+         |
+         |val showArrows = Property(true)
+         |val highlightActive = Property(true)
+         |val toggleArrows = UdashButton.toggle(active = showArrows)("Toggle arrows")
+         |val toggleHighlight = UdashButton.toggle(active = highlightActive)("Toggle highlight")
+         |
+         |val pages = SeqProperty(Seq.tabulate[Page](7)(idx =>
+         |  DefaultPage((idx+1).toString, Url(applicationInstance.currentState.url))
+         |))
+         |val selected = Property(0)
+         |val pagination = Pagination(
+         |  showArrows = showArrows, highlightActive = highlightActive
+         |)(pages, selected)(Pagination.defaultPageFactory)
+         |val pager = Pagination.pager()(pages, selected)(Pagination.defaultPageFactory)
+         |div(StyleUtils.center, GuideStyles.frame)(
+         |  div("Selected page index: ", bind(selected)),
+         |  div(
+         |    UdashButtonGroup()(
+         |      toggleArrows.render,
+         |      toggleHighlight.render
+         |    ).render
+         |  ),
+         |  pagination.render,
+         |  pager.render
+         |).render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.pagination(),
     h3("Labels"),
     CodeBlock(
       s"""UdashLabel("Default").render,

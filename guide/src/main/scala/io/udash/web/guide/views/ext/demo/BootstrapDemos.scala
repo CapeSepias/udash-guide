@@ -5,12 +5,13 @@ import io.udash.bootstrap.{BootstrapStyles, UdashBootstrap}
 import io.udash.bootstrap.button._
 import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
+import io.udash.bootstrap.pagination.Pagination
 import io.udash.bootstrap.utils.{Icons, UdashBadge, UdashLabel, UdashPageHeader}
 import io.udash.properties.SeqProperty
 import io.udash.web.commons.styles.GlobalStyles
 import io.udash.web.guide.styles.partials.GuideStyles
 import io.udash.web.guide.styles.utils.StyleUtils
-import io.udash.web.guide.{BootstrapExtState, IntroState}
+import io.udash.web.guide.{BootstrapExtState, Context, IntroState}
 import org.scalajs.dom
 
 import scala.collection.mutable
@@ -251,6 +252,36 @@ object BootstrapDemos extends StrictLogging {
         ).render,
         UdashDropdown(items)("Dropdown ").render
       ).render
+    ).render
+  }
+
+  def pagination(): dom.Element = {
+    import Pagination._
+    import Context._
+
+    val showArrows = Property(true)
+    val highlightActive = Property(true)
+    val toggleArrows = UdashButton.toggle(active = showArrows)("Toggle arrows")
+    val toggleHighlight = UdashButton.toggle(active = highlightActive)("Toggle highlight")
+
+    val pages = SeqProperty(Seq.tabulate[Page](7)(idx =>
+      DefaultPage((idx+1).toString, Url(applicationInstance.currentState.url))
+    ))
+    val selected = Property(0)
+    val pagination = Pagination(
+      showArrows = showArrows, highlightActive = highlightActive
+    )(pages, selected)(Pagination.defaultPageFactory)
+    val pager = Pagination.pager()(pages, selected)(Pagination.defaultPageFactory)
+    div(StyleUtils.center, GuideStyles.frame)(
+      div("Selected page index: ", bind(selected)),
+      div(
+        UdashButtonGroup()(
+          toggleArrows.render,
+          toggleHighlight.render
+        ).render
+      ),
+      div(GlobalStyles.centerBlock)(pagination.render),
+      pager.render
     ).render
   }
 
