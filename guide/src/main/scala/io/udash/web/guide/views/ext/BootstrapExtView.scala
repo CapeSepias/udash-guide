@@ -410,10 +410,60 @@ class BootstrapExtView extends View {
       s"""???""".stripMargin
     )(GuideStyles),
     h3("Modals"),
-    p("..."),
+    p(
+      "The modal window constructor takes three optional methods as the arguments. The first one is used to create ",
+      "a modal window's header, the second creates a body and the last produces a window's footer."
+    ),
+    p(
+      "The ", i("UdashModal"), " class exposes methods for opening/hiding window. It is also possible to listen on window's events."
+    ),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""val events = SeqProperty[UdashModal.ModalEvent]
+         |
+         |val header = () => div(
+         |  "Modal events",
+         |  UdashButton()(
+         |    UdashModal.closeButtonAttr(),
+         |    BootstrapStyles.close, "×"
+         |  ).render
+         |).render
+         |val body = () => div(
+         |  div(BootstrapStyles.Well.well)(
+         |    ul(repeat(events)(event => li(event.get.toString).render))
+         |  )
+         |).render
+         |val footer = () => div(
+         |  UdashButton()(UdashModal.closeButtonAttr(), "Close").render,
+         |  UdashButton(style = ButtonStyle.Primary)("Something...").render
+         |).render
+         |
+         |val modal = UdashModal(modalSize = ModalSize.Large)(
+         |  headerFactory = Some(header),
+         |  bodyFactory = Some(body),
+         |  footerFactory = Some(footer)
+         |)
+         |modal.listen { case ev => events.append(ev) }
+         |
+         |val openModalButton = UdashButton(style = ButtonStyle.Primary)(
+         |  modal.openButtonAttrs(), "Show modal..."
+         |)
+         |val openAndCloseButton = UdashButton()(
+         |  "Open and close after 2 seconds...",
+         |  onclick :+= ((_: Event) => {
+         |    modal.show()
+         |    window.setTimeout(() => modal.hide(), 2000)
+         |    false
+         |  }))
+         |
+         |div(
+         |  modal.render,
+         |  UdashButtonGroup()(
+         |    openModalButton.render,
+         |    openAndCloseButton.render
+         |  ).render
+         |).render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.simpleModal(),
     h3("ScrollSpy"),
     p("..."),
     CodeBlock(

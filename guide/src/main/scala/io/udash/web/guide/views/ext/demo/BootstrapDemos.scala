@@ -5,6 +5,7 @@ import io.udash.bootstrap.alert.{AlertStyle, UdashAlert}
 import io.udash.bootstrap.button._
 import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
+import io.udash.bootstrap.modal.{ModalSize, UdashModal}
 import io.udash.bootstrap.pagination.UdashPagination
 import io.udash.bootstrap.utils._
 import io.udash.bootstrap.{BootstrapStyles, UdashBootstrap}
@@ -374,6 +375,47 @@ object BootstrapDemos extends StrictLogging {
           li(click)
         ): _*).render
       )
+    ).render
+  }
+
+  def simpleModal(): dom.Element = {
+    val events = SeqProperty[UdashModal.ModalEvent]
+
+    val header = () => div(
+      "Modal events",
+      UdashButton()(UdashModal.closeButtonAttr(), BootstrapStyles.close, "×").render
+    ).render
+    val body = () => div(
+      div(BootstrapStyles.Well.well)(
+        ul(repeat(events)(event => li(event.get.toString).render))
+      )
+    ).render
+    val footer = () => div(
+      UdashButton()(UdashModal.closeButtonAttr(), "Close").render,
+      UdashButton(style = ButtonStyle.Primary)("Something...").render
+    ).render
+
+    val modal = UdashModal(modalSize = ModalSize.Large)(
+      headerFactory = Some(header),
+      bodyFactory = Some(body),
+      footerFactory = Some(footer)
+    )
+    modal.listen { case ev => events.append(ev) }
+
+    val openModalButton = UdashButton(style = ButtonStyle.Primary)(modal.openButtonAttrs(), "Show modal...")
+    val openAndCloseButton = UdashButton()("Open and close after 2 seconds...", onclick :+= (
+      (_: Event) => {
+        modal.show()
+        window.setTimeout(() => modal.hide(), 2000)
+        false
+      }
+    ))
+    div(StyleUtils.center, GuideStyles.frame)(
+      modal.render,
+      UdashButtonGroup()(
+        openModalButton.render,
+        openAndCloseButton.render
+      ).render
     ).render
   }
 
