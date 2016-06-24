@@ -485,9 +485,10 @@ object BootstrapDemos extends StrictLogging {
     )
 
     val accordionElement = accordion.render
-    news.elemProperties.foreach(news => {
-      accordion.collapseOf(news).listen { case ev => events.append(ev) }
-    })
+    news.elemProperties.map(news => {
+      accordion.collapseOf(news)
+    }).filter(_.isDefined)
+      .foreach(_.get.listen { case ev => events.append(ev) })
 
     div(StyleUtils.center, GuideStyles.frame)(
       div(ResetGuideStyles.reset)(
