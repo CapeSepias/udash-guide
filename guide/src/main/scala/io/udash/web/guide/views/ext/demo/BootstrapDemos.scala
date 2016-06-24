@@ -7,6 +7,8 @@ import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
 import io.udash.bootstrap.modal.{ModalSize, UdashModal}
 import io.udash.bootstrap.pagination.UdashPagination
+import io.udash.bootstrap.progressbar.ProgressBarStyle.{Striped, Success}
+import io.udash.bootstrap.progressbar.UdashProgressBar
 import io.udash.bootstrap.utils._
 import io.udash.bootstrap.{BootstrapStyles, UdashBootstrap}
 import io.udash.properties.SeqProperty
@@ -188,7 +190,7 @@ object BootstrapDemos extends StrictLogging {
   def staticButtonsGroup(): dom.Element = {
     div(StyleUtils.center, GuideStyles.frame)(
       UdashButtonGroup(vertical = true)(
-        UdashButton(style = ButtonStyle.Primary)("Button 1").render,
+        UdashButton(buttonStyle = ButtonStyle.Primary)("Button 1").render,
         UdashButton()("Button 2").render,
         UdashButton()("Button 3").render
       ).render
@@ -338,7 +340,7 @@ object BootstrapDemos extends StrictLogging {
     window.setInterval(() => counter.set(counter.get + 1), 3000)
     div(StyleUtils.center, GuideStyles.frame)(
       div(ResetGuideStyles.reset)(
-        UdashButton(style = ButtonStyle.Primary, size = ButtonSize.Large)("Button ", UdashBadge(counter).render).render
+        UdashButton(buttonStyle = ButtonStyle.Primary, size = ButtonSize.Large)("Button ", UdashBadge(counter).render).render
       )
     ).render
   }
@@ -392,7 +394,7 @@ object BootstrapDemos extends StrictLogging {
     ).render
     val footer = () => div(
       UdashButton()(UdashModal.closeButtonAttr(), "Close").render,
-      UdashButton(style = ButtonStyle.Primary)("Something...").render
+      UdashButton(buttonStyle = ButtonStyle.Primary)("Something...").render
     ).render
 
     val modal = UdashModal(modalSize = ModalSize.Large)(
@@ -402,7 +404,7 @@ object BootstrapDemos extends StrictLogging {
     )
     modal.listen { case ev => events.append(ev) }
 
-    val openModalButton = UdashButton(style = ButtonStyle.Primary)(modal.openButtonAttrs(), "Show modal...")
+    val openModalButton = UdashButton(buttonStyle = ButtonStyle.Primary)(modal.openButtonAttrs(), "Show modal...")
     val openAndCloseButton = UdashButton()("Open and close after 2 seconds...", onclick :+= (
       (_: Event) => {
         modal.show()
@@ -416,6 +418,25 @@ object BootstrapDemos extends StrictLogging {
         openModalButton.render,
         openAndCloseButton.render
       ).render
+    ).render
+  }
+
+  def progressBar(): dom.Element = {
+    val showPercentage = Property(true)
+    val animate = Property(true)
+    val value = Property(50)
+    div(StyleUtils.center, GuideStyles.frame)(
+      div(
+        UdashButtonGroup()(
+          UdashButton.toggle(active = showPercentage)("Show percentage").render,
+          UdashButton.toggle(active = animate)("Animate").render
+        ).render
+      ),
+      UdashProgressBar(value, showPercentage, barStyle = Success).render,
+      UdashProgressBar(value, showPercentage, barStyle = Striped).render,
+      NumberInput.debounced(value.transform(_.toString, Integer.parseInt))(
+        BootstrapStyles.Form.formControl, placeholder := "Percentage"
+      )
     ).render
   }
 

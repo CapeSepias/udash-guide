@@ -384,6 +384,7 @@ class BootstrapExtView extends View {
     CodeBlock(
       s"""???""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.progressBar(),
     h3("Media object"),
     p("..."),
     CodeBlock(
