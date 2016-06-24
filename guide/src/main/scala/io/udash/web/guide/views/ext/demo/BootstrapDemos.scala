@@ -386,7 +386,7 @@ object BootstrapDemos extends StrictLogging {
 
     val header = () => div(
       "Modal events",
-      UdashButton()(UdashModal.closeButtonAttr(), BootstrapStyles.close, "×").render
+      UdashButton()(UdashModal.CloseButtonAttr, BootstrapStyles.close, "×").render
     ).render
     val body = () => div(
       div(BootstrapStyles.Well.well)(
@@ -394,7 +394,7 @@ object BootstrapDemos extends StrictLogging {
       )
     ).render
     val footer = () => div(
-      UdashButton()(UdashModal.closeButtonAttr(), "Close").render,
+      UdashButton()(UdashModal.CloseButtonAttr, "Close").render,
       UdashButton(buttonStyle = ButtonStyle.Primary)("Something...").render
     ).render
 
