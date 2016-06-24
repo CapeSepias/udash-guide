@@ -185,11 +185,11 @@ class BootstrapExtView extends View {
     p("Use ", i("checkboxes"), " method in order to create a group of buttons behaving as checkboxes:"),
     CodeBlock(
       s"""import UdashButtonGroup._
-         |val options = SeqProperty[CheckboxModel](Seq(
+         |val options = SeqProperty[CheckboxModel](
          |  DefaultCheckboxModel("Checkbox 1 (pre-checked)", true),
          |  DefaultCheckboxModel("Checkbox 2", false),
          |  DefaultCheckboxModel("Checkbox 3", false)
-         |))
+         |)
          |div(
          |  UdashButtonGroup.checkboxes(options)(defaultCheckboxFactory).render,
          |  h4("Is active: "),
@@ -207,11 +207,11 @@ class BootstrapExtView extends View {
     p("The following example presents a group of buttons behaving as radio buttons:"),
     CodeBlock(
       s"""import UdashButtonGroup._
-         |val options = SeqProperty[CheckboxModel](Seq(
+         |val options = SeqProperty[CheckboxModel](
          |  DefaultCheckboxModel("Radio 1 (preselected)", true),
          |  DefaultCheckboxModel("Radio 2", false),
          |  DefaultCheckboxModel("Radio 3", false)
-         |))
+         |)
          |div(
          |  UdashButtonGroup.radio(options, justified = true).render,
          |  h4("Is active: "),
@@ -229,11 +229,11 @@ class BootstrapExtView extends View {
     h3("Button dropdowns"),
     p("The ", i("UdashDropdown"), " component can be used as part of a button group."),
     CodeBlock(
-      s"""val items = SeqProperty[DefaultDropdownItem](Seq(
+      s"""val items = SeqProperty[DefaultDropdownItem](
          |  UdashDropdown.DropdownHeader("Start"),
          |  UdashDropdown.DropdownLink("Intro", Url("#")),
          |  UdashDropdown.DropdownDisabled(UdashDropdown.DropdownLink("Test Disabled", Url("#"))),
-         |))
+         |)
          |UdashButtonToolbar(
          |  UdashButtonGroup()(
          |    UdashButton()("Button").render,
@@ -264,12 +264,12 @@ class BootstrapExtView extends View {
       s"""
          |import io.udash.bootstrap.utils.UdashBreadcrumbs._
          |
-         |val pages = SeqProperty[Breadcrumb](Seq(
+         |val pages = SeqProperty[Breadcrumb](
          |  DefaultBreadcrumb("Udash", Url("http://udash.io/")),
          |  DefaultBreadcrumb("Dev's Guide", Url("http://guide.udash.io/")),
          |  DefaultBreadcrumb("Extensions", Url("http://guide.udash.io/")),
          |  DefaultBreadcrumb("Bootstrap wrapper", Url("http://guide.udash.io/ext/bootstrap"))
-         |))
+         |)
          |val selected = pages.transform((pages: Seq[_]) => pages.size - 1)
          |val breadcrumbs = UdashBreadcrumbs(pages, selected)(defaultPageFactory)
          |breadcrumbs.render""".stripMargin
@@ -441,7 +441,7 @@ class BootstrapExtView extends View {
          |val header = () => div(
          |  "Modal events",
          |  UdashButton()(
-         |    UdashModal.closeButtonAttr(),
+         |    UdashModal.CloseButtonAttr,
          |    BootstrapStyles.close, "×"
          |  ).render
          |).render
@@ -451,7 +451,7 @@ class BootstrapExtView extends View {
          |  )
          |).render
          |val footer = () => div(
-         |  UdashButton()(UdashModal.closeButtonAttr(), "Close").render,
+         |  UdashButton()(UdashModal.CloseButtonAttr, "Close").render,
          |  UdashButton(style = ButtonStyle.Primary)("Something...").render
          |).render
          |
@@ -545,9 +545,9 @@ class BootstrapExtView extends View {
     ),
     CodeBlock(
       s"""val events = SeqProperty[UdashCollapse.CollapseEvent]
-         |val news = SeqProperty[String](Seq(
+         |val news = SeqProperty[String](
          |  "Title 1", "Title 2", "Title 3"
-         |))
+         |)
          |
          |val accordion = UdashAccordion(news)(
          |  (news) => span(news.get).render,

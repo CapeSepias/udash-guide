@@ -213,11 +213,11 @@ object BootstrapDemos extends StrictLogging {
 
   def checkboxButtons(): dom.Element = {
     import UdashButtonGroup._
-    val options = SeqProperty[CheckboxModel](Seq(
+    val options = SeqProperty[CheckboxModel](
       DefaultCheckboxModel("Checkbox 1 (pre-checked)", true),
       DefaultCheckboxModel("Checkbox 2", false),
       DefaultCheckboxModel("Checkbox 3", false)
-    ))
+    )
     div(StyleUtils.center, GuideStyles.frame)(
       UdashButtonGroup.checkboxes(options)(defaultCheckboxFactory).render,
       h4("Is active: "),
@@ -234,11 +234,11 @@ object BootstrapDemos extends StrictLogging {
 
   def radioButtons(): dom.Element = {
     import UdashButtonGroup._
-    val options = SeqProperty[CheckboxModel](Seq(
+    val options = SeqProperty[CheckboxModel](
       DefaultCheckboxModel("Radio 1 (preselected)", true),
       DefaultCheckboxModel("Radio 2", false),
       DefaultCheckboxModel("Radio 3", false)
-    ))
+    )
     div(StyleUtils.center, GuideStyles.frame)(
       UdashButtonGroup.radio(options, justified = true).render,
       h4("Is active: "),
@@ -254,14 +254,14 @@ object BootstrapDemos extends StrictLogging {
   }
 
   def buttonDropdown(): dom.Element = {
-    val items = SeqProperty[DefaultDropdownItem](Seq(
+    val items = SeqProperty[DefaultDropdownItem](
       UdashDropdown.DropdownHeader("Start"),
       UdashDropdown.DropdownLink("Intro", Url("#")),
       UdashDropdown.DropdownDisabled(UdashDropdown.DropdownLink("Test Disabled", Url("#"))),
       UdashDropdown.DropdownDivider,
       UdashDropdown.DropdownHeader("End"),
       UdashDropdown.DropdownLink("Intro", Url("#"))
-    ))
+    )
     div(StyleUtils.center, GuideStyles.frame)(
       UdashButtonToolbar(
         UdashButtonGroup()(
@@ -277,12 +277,12 @@ object BootstrapDemos extends StrictLogging {
   def breadcrumbs(): dom.Element = {
     import io.udash.bootstrap.utils.UdashBreadcrumbs._
 
-    val pages = SeqProperty[Breadcrumb](Seq(
+    val pages = SeqProperty[Breadcrumb](
       DefaultBreadcrumb("Udash", Url("http://udash.io/")),
       DefaultBreadcrumb("Dev's Guide", Url("http://guide.udash.io/")),
       DefaultBreadcrumb("Extensions", Url("http://guide.udash.io/")),
       DefaultBreadcrumb("Bootstrap wrapper", Url("http://guide.udash.io/ext/bootstrap"))
-    ))
+    )
 
     val selected = pages.transform((pages: Seq[_]) => pages.size - 1)
     val breadcrumbs = UdashBreadcrumbs(pages, selected)(defaultPageFactory)
@@ -471,9 +471,9 @@ object BootstrapDemos extends StrictLogging {
 
   def accordionCollapse(): dom.Element = {
     val events = SeqProperty[UdashCollapse.CollapseEvent]
-    val news = SeqProperty[String](Seq(
+    val news = SeqProperty[String](
       "Title 1", "Title 2", "Title 3"
-    ))
+    )
 
     val accordion = UdashAccordion(news)(
       (news) => span(news.get).render,
