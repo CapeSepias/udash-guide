@@ -8,7 +8,7 @@ import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
 import io.udash.bootstrap.modal.{ModalSize, UdashModal}
 import io.udash.bootstrap.pagination.UdashPagination
-import io.udash.bootstrap.progressbar.ProgressBarStyle.{Striped, Success}
+import io.udash.bootstrap.progressbar.ProgressBarStyle.{Danger, Striped, Success}
 import io.udash.bootstrap.progressbar.UdashProgressBar
 import io.udash.bootstrap.utils._
 import io.udash.bootstrap.{BootstrapStyles, UdashBootstrap}
@@ -432,9 +432,10 @@ object BootstrapDemos extends StrictLogging {
           UdashButton.toggle(active = showPercentage)("Show percentage").render,
           UdashButton.toggle(active = animate)("Animate").render
         ).render
-      ),
-      UdashProgressBar(value, showPercentage, barStyle = Success).render,
-      UdashProgressBar(value, showPercentage, barStyle = Striped).render,
+      ), br,
+      UdashProgressBar(value, showPercentage, Success).render,
+      UdashProgressBar(value, showPercentage, Striped).render,
+      UdashProgressBar.animated(value, showPercentage, animate, Danger).render,
       NumberInput.debounced(value.transform(_.toString, Integer.parseInt))(
         BootstrapStyles.Form.formControl, placeholder := "Percentage"
       )

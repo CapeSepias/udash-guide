@@ -380,9 +380,26 @@ class BootstrapExtView extends View {
     )(GuideStyles),
     BootstrapDemos.alerts(),
     h3("Progress bars"),
-    p("..."),
+    p("The ", i("UdashProgressBar"), " component provides a simple way to use built-in Bootstrap progress bars ",
+    "with ", i("Property"), "-controlled value, percentage showing and animation."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""|val showPercentage = Property(true)
+          |val animate = Property(true)
+          |val value = Property(50)
+          |div(StyleUtils.center, GuideStyles.frame)(
+          |  div(
+          |    UdashButtonGroup()(
+          |      UdashButton.toggle(active = showPercentage)("Show percentage").render,
+          |      UdashButton.toggle(active = animate)("Animate").render
+          |    ).render
+          |  ),
+          |  UdashProgressBar(value, showPercentage, Success).render,
+          |  UdashProgressBar(value, showPercentage, Striped).render,
+          |  UdashProgressBar.animated(value, showPercentage, animate, Danger).render,
+          |  NumberInput.debounced(value.transform(_.toString, Integer.parseInt))(
+          |    BootstrapStyles.Form.formControl, placeholder := "Percentage"
+          |  )
+          |).render""".stripMargin
     )(GuideStyles),
     BootstrapDemos.progressBar(),
     h3("Media object"),
