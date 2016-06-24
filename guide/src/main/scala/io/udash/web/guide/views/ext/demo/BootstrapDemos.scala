@@ -381,6 +381,26 @@ object BootstrapDemos extends StrictLogging {
     ).render
   }
 
+  def responsiveEmbed(): dom.Element = {
+    div(StyleUtils.center, GuideStyles.frame)(
+      div(BootstrapStyles.EmbedResponsive.embed, BootstrapStyles.EmbedResponsive.embed16by9, GlobalStyles.smallMargin)(
+        iframe(BootstrapStyles.EmbedResponsive.item, src := "http://www.youtube.com/embed/zpOULjyy-n8?rel=0")
+      ),
+      div(BootstrapStyles.EmbedResponsive.embed, BootstrapStyles.EmbedResponsive.embed4by3, GlobalStyles.smallMargin)(
+        iframe(BootstrapStyles.EmbedResponsive.item, src := "http://www.youtube.com/embed/zpOULjyy-n8?rel=0")
+      )
+    ).render
+  }
+
+
+  def wells(): dom.Element = {
+    div(StyleUtils.center, GuideStyles.frame)(
+      div(BootstrapStyles.Well.well, BootstrapStyles.Well.wellSm)("Small well..."),
+      div(BootstrapStyles.Well.well)("Standard well..."),
+      div(BootstrapStyles.Well.well, BootstrapStyles.Well.wellLg)("Large well...")
+    ).render
+  }
+
   def simpleModal(): dom.Element = {
     val events = SeqProperty[UdashModal.ModalEvent]
 

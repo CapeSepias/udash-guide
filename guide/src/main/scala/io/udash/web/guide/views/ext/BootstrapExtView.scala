@@ -418,15 +418,34 @@ class BootstrapExtView extends View {
       s"""???""".stripMargin
     )(GuideStyles),
     h3("Responsive embed"),
-    p("..."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""div(
+         |  div(BootstrapStyles.EmbedResponsive.embed,
+         |      BootstrapStyles.EmbedResponsive.embed16by9)(
+         |    iframe(BootstrapStyles.EmbedResponsive.item, src := "...")
+         |  ),
+         |  div(BootstrapStyles.EmbedResponsive.embed,
+         |      BootstrapStyles.EmbedResponsive.embed4by3)(
+         |    iframe(BootstrapStyles.EmbedResponsive.item, src := "...")
+         |  )
+         |).render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.responsiveEmbed(),
     h3("Wells"),
-    p("..."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""div(
+         |  div(BootstrapStyles.Well.well, BootstrapStyles.Well.wellSm)(
+         |    "Small well..."
+         |  ),
+         |  div(BootstrapStyles.Well.well)(
+         |    "Standard well..."
+         |  ),
+         |  div(BootstrapStyles.Well.well, BootstrapStyles.Well.wellLg)(
+         |    "Large well..."
+         |  )
+         |).render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.wells(),
     h3("Modals"),
     p(
       "The modal window constructor takes three optional methods as the arguments. The first one is used to create ",
