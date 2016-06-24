@@ -486,10 +486,74 @@ class BootstrapExtView extends View {
       s"""???""".stripMargin
     )(GuideStyles),
     h3("Collapse"),
-    p("..."),
+    p(
+      i("UdashCollapse"), " represents element with toggle behaviour. It provides methods ",
+      i("toggle"), ", ", i("open"), " and ", i("close"), " for manual manipulation and ",
+      i("toggleButtonAttrs"), " for easy creation of toggle button."
+    ),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""val events = SeqProperty[UdashCollapse.CollapseEvent]
+         |
+         |val collapse = UdashCollapse()(
+         |  div(BootstrapStyles.Well.well)(
+         |    ul(repeat(events)(event => li(event.get.toString).render))
+         |  )
+         |)
+         |collapse.listen { case ev => events.append(ev) }
+         |
+         |val toggleButton = UdashButton(style = ButtonStyle.Primary)(
+         |  collapse.toggleButtonAttrs(), "Toggle..."
+         |)
+         |val openAndCloseButton = UdashButton()(
+         |  "Open and close after 2 seconds...",
+         |  onclick :+= ((_: Event) => {
+         |    collapse.show()
+         |    window.setTimeout(() => collapse.hide(), 2000)
+         |    false
+         |  })
+         |)
+         |
+         |div(
+         |  UdashButtonGroup(justified = true)(
+         |    toggleButton.render,
+         |    openAndCloseButton.render
+         |  ).render,
+         |  collapse.render
+         |).render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.simpleCollapse(),
+    p(
+      i("UdashAccordion"), " internally uses ", i("UdashCollapse"), ". It provides ",
+      i("collapseOf"), " method for obtaining ", i("UdashCollapse"), " created for selected element."
+    ),
+    CodeBlock(
+      s"""val events = SeqProperty[UdashCollapse.CollapseEvent]
+         |val news = SeqProperty[String](Seq(
+         |  "Title 1", "Title 2", "Title 3"
+         |))
+         |
+         |val accordion = UdashAccordion(news)(
+         |  (news) => span(news.get).render,
+         |  (_) => div(BootstrapStyles.Panel.panelBody)(
+         |    div(BootstrapStyles.Well.well)(
+         |      ul(repeat(events)(event => li(event.get.toString).render))
+         |    )
+         |  ).render
+         |)
+         |
+         |val accordionElement = accordion.render
+         |news.elemProperties.foreach(news => {
+         |  accordion.collapseOf(news).listen { case ev => events.append(ev) }
+         |})
+         |
+         |div(StyleUtils.center, GuideStyles.frame)(
+         |  div(ResetGuideStyles.reset)(
+         |    accordionElement
+         |  )
+         |).render
+       """.stripMargin
+    )(GuideStyles),
+    BootstrapDemos.accordionCollapse(),
     h3("Carousel"),
     p("..."),
     CodeBlock(

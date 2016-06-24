@@ -3,6 +3,7 @@ package io.udash.web.guide.views.ext.demo
 import io.udash._
 import io.udash.bootstrap.alert.{AlertStyle, UdashAlert}
 import io.udash.bootstrap.button._
+import io.udash.bootstrap.collapse.{UdashAccordion, UdashCollapse}
 import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
 import io.udash.bootstrap.modal.{ModalSize, UdashModal}
@@ -436,6 +437,60 @@ object BootstrapDemos extends StrictLogging {
       UdashProgressBar(value, showPercentage, barStyle = Striped).render,
       NumberInput.debounced(value.transform(_.toString, Integer.parseInt))(
         BootstrapStyles.Form.formControl, placeholder := "Percentage"
+      )
+    ).render
+  }
+
+  def simpleCollapse(): dom.Element = {
+    val events = SeqProperty[UdashCollapse.CollapseEvent]
+
+    val collapse = UdashCollapse()(
+      div(BootstrapStyles.Well.well)(
+        ul(repeat(events)(event => li(event.get.toString).render))
+      )
+    )
+    collapse.listen { case ev => events.append(ev) }
+
+    val toggleButton = UdashButton(buttonStyle = ButtonStyle.Primary)(collapse.toggleButtonAttrs(), "Toggle...")
+    val openAndCloseButton = UdashButton()("Open and close after 2 seconds...", onclick :+= (
+      (_: Event) => {
+        collapse.show()
+        window.setTimeout(() => collapse.hide(), 2000)
+        false
+      }
+    ))
+    div(StyleUtils.center, GuideStyles.frame)(
+      UdashButtonGroup(justified = true)(
+        toggleButton.render,
+        openAndCloseButton.render
+      ).render,
+      collapse.render
+    ).render
+  }
+
+  def accordionCollapse(): dom.Element = {
+    val events = SeqProperty[UdashCollapse.CollapseEvent]
+    val news = SeqProperty[String](Seq(
+      "Title 1", "Title 2", "Title 3"
+    ))
+
+    val accordion = UdashAccordion(news)(
+      (news) => span(news.get).render,
+      (_) => div(BootstrapStyles.Panel.panelBody)(
+        div(BootstrapStyles.Well.well)(
+          ul(repeat(events)(event => li(event.get.toString).render))
+        )
+      ).render
+    )
+
+    val accordionElement = accordion.render
+    news.elemProperties.foreach(news => {
+      accordion.collapseOf(news).listen { case ev => events.append(ev) }
+    })
+
+    div(StyleUtils.center, GuideStyles.frame)(
+      div(ResetGuideStyles.reset)(
+        accordionElement
       )
     ).render
   }
