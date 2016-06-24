@@ -433,9 +433,9 @@ object BootstrapDemos extends StrictLogging {
           UdashButton.toggle(active = animate)("Animate").render
         ).render
       ), br,
-      UdashProgressBar(value, showPercentage, Success).render,
-      UdashProgressBar(value, showPercentage, Striped).render,
-      UdashProgressBar.animated(value, showPercentage, animate, Danger).render,
+      UdashProgressBar(value, showPercentage, Success)().render,
+      UdashProgressBar(value, showPercentage, Striped)(value => value + " percent").render,
+      UdashProgressBar.animated(value, showPercentage, animate, Danger)().render,
       NumberInput.debounced(value.transform(_.toString, Integer.parseInt))(
         BootstrapStyles.Form.formControl, placeholder := "Percentage"
       )
