@@ -247,8 +247,27 @@ class BootstrapExtView extends View {
     h3("Input groups"),
     p("..."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""val vanityUrl = Property[String]
+         |val buttonDisabled = Property(true)
+         |vanityUrl.listen(v => buttonDisabled.set(v.isEmpty))
+         |div(
+         |  label("Your URL"),
+         |  UdashInputGroup(InputGroupSize.Large)(
+         |    UdashInputGroup.addon("https://example.com/users/", bind(vanityUrl)),
+         |    UdashInputGroup.input(TextInput.debounced(vanityUrl).render),
+         |    UdashInputGroup.buttons(
+         |      UdashButton(
+         |        disabled = buttonDisabled
+         |      )("Go!").render,
+         |      UdashButton()(
+         |        "Clear",
+         |        onclick :+= ((_: Event) => { vanityUrl.set(""); false })
+         |      ).render
+         |    )
+         |  ).render
+         |).render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.inputGroups(),
     h3("Navs"),
     p("..."),
     CodeBlock(

@@ -6,6 +6,7 @@ import io.udash.bootstrap.button._
 import io.udash.bootstrap.collapse.{UdashAccordion, UdashCollapse}
 import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
+import io.udash.bootstrap.form.{InputGroupSize, UdashInputGroup}
 import io.udash.bootstrap.modal.{ModalSize, UdashModal}
 import io.udash.bootstrap.pagination.UdashPagination
 import io.udash.bootstrap.progressbar.ProgressBarStyle.{Danger, Striped, Success}
@@ -39,6 +40,10 @@ object BootstrapDemos extends StrictLogging {
         color.inherit,
         &.hover(color.inherit),
         &.visited(color.inherit)
+      ),
+      unsafeChild("label")(
+        marginBottom(5 px),
+        fontWeight._700
       ),
 
       fontFamily :=! "\"Helvetica Neue\",Helvetica,Arial,sans-serif",
@@ -270,6 +275,25 @@ object BootstrapDemos extends StrictLogging {
           UdashDropdown.dropup(items)().render
         ).render,
         UdashDropdown(items)("Dropdown ").render
+      ).render
+    ).render
+  }
+
+  def inputGroups(): dom.Element = {
+    val vanityUrl = Property[String]
+    val buttonDisabled = Property(true)
+    vanityUrl.listen(v => buttonDisabled.set(v.isEmpty))
+    div(StyleUtils.center, GuideStyles.frame, ResetGuideStyles.reset)(
+      label("Your URL"),
+      UdashInputGroup(InputGroupSize.Large)(
+        UdashInputGroup.addon("https://example.com/users/", bind(vanityUrl)),
+        UdashInputGroup.input(TextInput.debounced(vanityUrl).render),
+        UdashInputGroup.buttons(
+          UdashButton(
+            disabled = buttonDisabled
+          )("Go!").render,
+          UdashButton()("Clear", onclick :+= ((_: Event) => { vanityUrl.set(""); false })).render
+        )
       ).render
     ).render
   }
