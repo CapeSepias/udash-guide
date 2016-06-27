@@ -333,11 +333,6 @@ class BootstrapExtView extends View {
     CodeBlock(
       s"""UdashPageHeader(h1("Header ", small("Subtext"))).render""".stripMargin
     )(GuideStyles),
-    h3("Thumbnails"),
-    p("..."),
-    CodeBlock(
-      s"""???""".stripMargin
-    )(GuideStyles),
     h3("Alerts"),
     p("The ", i("UdashAlert")," component supports both regular and dismissible Bootstrap alerts with typesafe styling and ",
     i("Property"),"-based dismissal mechanism."),
@@ -408,10 +403,34 @@ class BootstrapExtView extends View {
       s"""???""".stripMargin
     )(GuideStyles),
     h3("List group"),
-    p("..."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""import io.udash.bootstrap.BootstrapImplicits._
+         |val news = SeqProperty[String]("Title 1", "Title 2", "Title 3")
+         |val listGroup = UdashListGroup(news)((news) =>
+         |  li(
+         |    BootstrapStyles.active.styleIf(news.transform(_.endsWith("1"))),
+         |    BootstrapStyles.disabled.styleIf(news.transform(_.endsWith("2"))),
+         |    BootstrapStyles.List.listItemSuccess.styleIf(news.transform(_.endsWith("3"))),
+         |    BootstrapStyles.List.listItemDanger.styleIf(news.transform(_.endsWith("4"))),
+         |    BootstrapStyles.List.listItemInfo.styleIf(news.transform(_.endsWith("5"))),
+         |    BootstrapStyles.List.listItemWarning.styleIf(news.transform(_.endsWith("6")))
+         |  )(bind(news)).render
+         |)
+         |
+         |var i = 1
+         |val appendHandler = window.setInterval(() => {
+         |  news.append(s"Dynamic $i")
+         |  i += 1
+         |}, 2000)
+         |window.setTimeout(() => window.clearInterval(appendHandler), 20000)
+         |
+         |div(StyleUtils.center, GuideStyles.frame)(
+         |  div(ResetGuideStyles.reset)(
+         |    listGroup.render
+         |  )
+         |).render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.listGroup(),
     h3("Panels"),
     p("..."),
     CodeBlock(
