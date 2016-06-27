@@ -6,7 +6,7 @@ import io.udash.bootstrap.button._
 import io.udash.bootstrap.collapse.{UdashAccordion, UdashCollapse}
 import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
-import io.udash.bootstrap.form.{InputGroupSize, UdashInputGroup}
+import io.udash.bootstrap.form.{InputGroupSize, UdashForm, UdashInputGroup}
 import io.udash.bootstrap.modal.{ModalSize, UdashModal}
 import io.udash.bootstrap.pagination.UdashPagination
 import io.udash.bootstrap.progressbar.ProgressBarStyle.{Danger, Striped, Success}
@@ -21,8 +21,9 @@ import io.udash.web.guide.{BootstrapExtState, Context, IntroState}
 import org.scalajs.dom
 
 import scala.collection.mutable
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
-import scala.util.Random
+import scala.util.{Random, Try}
 import scalatags.JsDom
 
 object BootstrapDemos extends StrictLogging {
@@ -294,6 +295,77 @@ object BootstrapDemos extends StrictLogging {
           )("Go!").render,
           UdashButton()("Clear", onclick :+= ((_: Event) => { vanityUrl.set(""); false })).render
         )
+      ).render
+    ).render
+  }
+
+  def simpleForm(): dom.Element = {
+    sealed trait ShirtSize
+    case object Small extends ShirtSize
+    case object Medium extends ShirtSize
+    case object Large extends ShirtSize
+
+    def shirtSizeToLabel(size: ShirtSize): String = size match {
+      case Small => "S"
+      case Medium => "M"
+      case Large => "L"
+    }
+
+    def labelToShirtSize(label: String): ShirtSize = label match {
+      case "S" => Small
+      case "M" => Medium
+      case "L" => Large
+    }
+
+    trait UserModel {
+      def name: String
+      def age: Int
+      def shirtSize: ShirtSize
+    }
+
+    val user = ModelProperty[UserModel]
+    user.subProp(_.name).set("")
+    user.subProp(_.age).set(25)
+    user.subProp(_.shirtSize).set(Medium)
+    user.subProp(_.age).addValidator(new Validator[Int] {
+      override def apply(element: Int)(implicit ec: ExecutionContext) =
+        Future {
+          if (element <= 0) Invalid(Seq("It should be positive integer!"))
+          else Valid
+        }
+    })
+
+    div(StyleUtils.center, GuideStyles.frame, ResetGuideStyles.reset)(
+      UdashForm(
+        UdashForm.textInput()("User name")(user.subProp(_.name)),
+        UdashForm.numberInput(
+          validation = Some(UdashForm.validation(user.subProp(_.age)))
+        )("Age")(user.subProp(_.age).transform(_.toString, _.toInt)),
+        UdashForm.group(
+          label("Shirt size"),
+          UdashForm.radio(
+            user.subProp(_.shirtSize)
+              .transform(shirtSizeToLabel, labelToShirtSize),
+            Seq(Small, Medium, Large).map(shirtSizeToLabel),
+            radioStyle = BootstrapStyles.Form.radioInline
+          )
+        ),
+        UdashForm.disabled()(UdashButton()("Send").render)
+      ).render
+    ).render
+  }
+
+  def inlineForm(): dom.Element = {
+    val search = Property[String]
+    div(StyleUtils.center, GuideStyles.frame, ResetGuideStyles.reset)(
+      UdashForm.inline(
+        UdashForm.group(
+          UdashInputGroup()(
+            UdashInputGroup.addon("Search: "),
+            UdashInputGroup.input(TextInput.debounced(search).render)
+          ).render
+        ),
+        UdashButton()(GlobalStyles.smallMargin, "Send").render
       ).render
     ).render
   }

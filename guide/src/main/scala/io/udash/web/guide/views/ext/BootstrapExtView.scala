@@ -245,7 +245,10 @@ class BootstrapExtView extends View {
     )(GuideStyles),
     BootstrapDemos.buttonDropdown(),
     h3("Input groups"),
-    p("..."),
+    p(
+      i("UdashInputGroup"), " groups input elements into one component. It also provides convinient methods for creating the elements structure: ",
+      i("input"), " for wrapping input elements, ", i("addon"), " for text elements and ", i("buttons"), " for buttons."
+    ),
     CodeBlock(
       s"""val vanityUrl = Property[String]
          |val buttonDisabled = Property(true)
@@ -268,6 +271,64 @@ class BootstrapExtView extends View {
          |).render""".stripMargin
     )(GuideStyles),
     BootstrapDemos.inputGroups(),
+    h3("Forms"),
+    p(i("UdashForm"), " provides a lot of convinient methods for creating forms."),
+    CodeBlock(
+      s"""/** Omitting: ShirtSize, shirtSizeToLabe, labelToShirtSize */
+         |trait UserModel {
+         |  def name: String
+         |  def age: Int
+         |  def shirtSize: ShirtSize
+         |}
+         |
+         |val user = ModelProperty[UserModel]
+         |user.subProp(_.name).set("")
+         |user.subProp(_.age).set(25)
+         |user.subProp(_.shirtSize).set(Medium)
+         |user.subProp(_.age).addValidator(new Validator[Int] {
+         |  def apply(element: Int)(implicit ec: ExecutionContext) =
+         |    Future {
+         |      if (element <= 0) Invalid(Seq("It should be positive integer!"))
+         |      else Valid
+         |    }
+         |})
+         |
+         |div(StyleUtils.center, GuideStyles.frame, ResetGuideStyles.reset)(
+         |  UdashForm(
+         |    UdashForm.textInput()("User name")(user.subProp(_.name)),
+         |    UdashForm.numberInput(
+         |      validation = Some(UdashForm.validation(user.subProp(_.age)))
+         |    )("Age")(user.subProp(_.age).transform(_.toString, _.toInt)),
+         |    UdashForm.group(
+         |      label("Shirt size"),
+         |      UdashForm.radio(
+         |        user.subProp(_.shirtSize)
+         |          .transform(shirtSizeToLabel, labelToShirtSize),
+         |        Seq(Small, Medium, Large).map(shirtSizeToLabel),
+         |        radioStyle = BootstrapStyles.Form.radioInline
+         |      )
+         |    ),
+         |    UdashForm.disabled()(UdashButton()("Send").render)
+         |  ).render
+         |).render""".stripMargin
+    )(GuideStyles),
+    BootstrapDemos.simpleForm(),
+    p("It is also possible to create ", i("inline"), " or ", i("horizontal"), " forms."),
+    CodeBlock(
+      s"""val search = Property[String]
+         |div(StyleUtils.center, GuideStyles.frame, ResetGuideStyles.reset)(
+         |  UdashForm.inline(
+         |    UdashForm.group(
+         |      UdashInputGroup()(
+         |        UdashInputGroup.addon("Search: "),
+         |        UdashInputGroup.input(TextInput.debounced(search).render)
+         |      ).render
+         |    ),
+         |    UdashButton()("Send").render
+         |  ).render
+         |).render""".stripMargin
+    )(GuideStyles),
+    BootstrapDemos.inlineForm(),
     h3("Navs"),
     p("..."),
     CodeBlock(
