@@ -293,7 +293,7 @@ class BootstrapExtView extends View {
          |    }
          |})
          |
-         |div(StyleUtils.center, GuideStyles.frame, ResetGuideStyles.reset)(
+         |div(
          |  UdashForm(
          |    UdashForm.textInput()("User name")(user.subProp(_.name)),
          |    UdashForm.numberInput(
@@ -316,7 +316,7 @@ class BootstrapExtView extends View {
     p("It is also possible to create ", i("inline"), " or ", i("horizontal"), " forms."),
     CodeBlock(
       s"""val search = Property[String]
-         |div(StyleUtils.center, GuideStyles.frame, ResetGuideStyles.reset)(
+         |div(
          |  UdashForm.inline(
          |    UdashForm.group(
          |      UdashInputGroup()(
@@ -330,10 +330,39 @@ class BootstrapExtView extends View {
     )(GuideStyles),
     BootstrapDemos.inlineForm(),
     h3("Navs"),
-    p("..."),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""trait Panel {
+         |  def title: String
+         |  def content: String
+         |}
+         |case class DefaultPanel(override val title: String,
+         |                        override val content: String) extends Panel
+         |
+         |val panels = SeqProperty[Panel](
+         |  DefaultPanel("Title 1", "Content of panel 1..."),
+         |  DefaultPanel("Title 2", "Content of panel 2..."),
+         |  DefaultPanel("Title 3", "Content of panel 3..."),
+         |  DefaultPanel("Title 4", "Content of panel 4...")
+         |)
+         |val selected = Property[Panel](panels.elemProperties.head.get)
+         |panels.append(DefaultPanel("Title 5", "Content of panel 5..."))
+         |
+         |div(StyleUtils.center, GuideStyles.frame, ResetGuideStyles.reset)(
+         |  UdashNav.tabs(justified = true)(panels)(
+         |    elemFactory = (panel) => a(href := "", onclick :+= ((ev: Event) => {
+         |      selected.set(panel.get)
+         |      true
+         |    }))(bind(panel.asModel.subProp(_.title))).render,
+         |    isActive = (panel) => panel.combine(selected)(
+         |      (panel, selected) => panel.title == selected.title
+         |    )
+         |  ).render,
+         |  div(BootstrapStyles.Well.well)(
+         |    bind(selected.asModel.subProp(_.content))
+         |  )
+         |).render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.navs(),
     h3("Navbar"),
     p("..."),
     CodeBlock(

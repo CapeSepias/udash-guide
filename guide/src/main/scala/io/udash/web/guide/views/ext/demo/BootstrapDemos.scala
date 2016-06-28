@@ -8,6 +8,7 @@ import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
 import io.udash.bootstrap.form.{InputGroupSize, UdashForm, UdashInputGroup}
 import io.udash.bootstrap.modal.{ModalSize, UdashModal}
+import io.udash.bootstrap.navs.UdashNav
 import io.udash.bootstrap.pagination.UdashPagination
 import io.udash.bootstrap.progressbar.ProgressBarStyle.{Danger, Striped, Success}
 import io.udash.bootstrap.progressbar.UdashProgressBar
@@ -367,6 +368,35 @@ object BootstrapDemos extends StrictLogging {
         ),
         UdashButton()(GlobalStyles.smallMargin, "Send").render
       ).render
+    ).render
+  }
+
+  def navs(): dom.Element = {
+    trait Panel {
+      def title: String
+      def content: String
+    }
+    case class DefaultPanel(override val title: String, override val content: String) extends Panel
+
+    val panels = SeqProperty[Panel](
+      DefaultPanel("Title 1", "Content of panel 1..."),
+      DefaultPanel("Title 2", "Content of panel 2..."),
+      DefaultPanel("Title 3", "Content of panel 3..."),
+      DefaultPanel("Title 4", "Content of panel 4...")
+    )
+    val selected = Property[Panel](panels.elemProperties.head.get)
+    panels.append(DefaultPanel("Title 5", "Content of panel 5..."))
+    div(StyleUtils.center, GuideStyles.frame, ResetGuideStyles.reset)(
+      UdashNav.tabs(justified = true)(panels)(
+        elemFactory = (panel) => a(href := "", onclick :+= ((ev: Event) => {
+          selected.set(panel.get)
+          true
+        }))(bind(panel.asModel.subProp(_.title))).render,
+        isActive = (panel) => panel.combine(selected)((panel, selected) => panel.title == selected.title)
+      ).render,
+      div(BootstrapStyles.Well.well)(
+        bind(selected.asModel.subProp(_.content))
+      )
     ).render
   }
 
