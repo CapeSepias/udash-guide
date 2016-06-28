@@ -123,7 +123,7 @@ class BootstrapExtView extends View {
           |
           |val clicks = SeqProperty[String](Seq.empty)
           |buttons.foreach(_.listen {
-          |  case ev => clicks.append(ev.button.render.textContent)
+          |  case ev => clicks.append(ev.source.render.textContent)
           |})
           |
           |val push = UdashButton(size = ButtonSize.Large, block = true)(
@@ -720,10 +720,56 @@ class BootstrapExtView extends View {
     )(GuideStyles),
     BootstrapDemos.accordionCollapse(),
     h3("Carousel"),
-    p("..."),
+    p(
+      i("UdashCarousel"), " is a slideshow component. It exposes its state (slides, current view) through ", i("Properties"),
+      " and can be cycled through programatically."
+    ),
     CodeBlock(
-      s"""???""".stripMargin
+      s"""|def newSlide(): UdashCarouselSlide = UdashCarouselSlide(
+          |  Url("assets/images/ext/bootstrap/carousel.png")
+          |)(
+          |  h3(randomString()),
+          |  p(randomString())
+          |)
+          |val slides = SeqProperty[UdashCarouselSlide](
+          |  (1 to 4).map(_ => newSlide())
+          |)
+          |val active = Property(false)
+          |import scala.concurrent.duration._
+          |val carousel = UdashCarousel(slides, activeSlide = 1,
+          |  animationOptions = AnimationOptions(interval = 2 seconds,
+          |    keyboard = false, active = active.get)
+          |)
+          |val prevButton = UdashButton()("Prev")
+          |val nextButton = UdashButton()("Next")
+          |val prependButton = UdashButton()("Prepend")
+          |val appendButton = UdashButton()("Append")
+          |carousel.listen { case any => println(any) }
+          |prevButton.listen { case _ => carousel.previousSlide() }
+          |nextButton.listen { case _ => carousel.nextSlide() }
+          |prependButton.listen { case _ => slides.prepend(newSlide()) }
+          |appendButton.listen { case _ => slides.append(newSlide()) }
+          |active.listen(b => if (b) carousel.cycle() else carousel.pause())
+          |div(StyleUtils.center)(
+          |  div(GuideStyles.frame)(
+          |    UdashButtonToolbar(
+          |      UdashButton.toggle(active = active)("Run animation").render,
+          |      UdashButtonGroup()(
+          |        prevButton.render,
+          |        nextButton.render
+          |      ).render,
+          |      UdashButtonGroup()(
+          |        prependButton.render,
+          |        appendButton.render
+          |      ).render
+          |    ).render
+          |  ),
+          |  div(ResetGuideStyles.reset)(
+          |    carousel.render
+          |  ).render
+          |).render""".stripMargin
     )(GuideStyles),
+    BootstrapDemos.carousel(),
     h2("What's next?"),
     p("...")
   ).render

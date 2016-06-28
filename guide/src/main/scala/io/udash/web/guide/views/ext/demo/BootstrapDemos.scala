@@ -3,6 +3,8 @@ package io.udash.web.guide.views.ext.demo
 import io.udash._
 import io.udash.bootstrap.alert.{AlertStyle, UdashAlert}
 import io.udash.bootstrap.button._
+import io.udash.bootstrap.carousel.UdashCarousel.AnimationOptions
+import io.udash.bootstrap.carousel.{UdashCarousel, UdashCarouselSlide}
 import io.udash.bootstrap.collapse.{UdashAccordion, UdashCollapse}
 import io.udash.bootstrap.dropdown.UdashDropdown
 import io.udash.bootstrap.dropdown.UdashDropdown.{DefaultDropdownItem, DropdownEvent}
@@ -36,7 +38,9 @@ object BootstrapDemos extends StrictLogging {
   import scalacss.ScalatagsCss._
 
   object ResetGuideStyles extends StyleSheet.Inline {
+
     import dsl._
+
     val reset = style(
       unsafeChild("a")(
         color.inherit,
@@ -144,7 +148,7 @@ object BootstrapDemos extends StrictLogging {
 
     val clicks = SeqProperty[String](Seq.empty)
     buttons.foreach(_.listen {
-      case ev => clicks.append(ev.button.render.textContent)
+      case ev => clicks.append(ev.source.render.textContent)
     })
 
     val push = UdashButton(size = ButtonSize.Large, block = true)("Push the button!")
@@ -188,7 +192,7 @@ object BootstrapDemos extends StrictLogging {
       ),
       h4("Is active: "),
       div(BootstrapStyles.Well.well)(
-        buttons.map({case (name, button) =>
+        buttons.map({ case (name, button) =>
           span(s"$name: ", bind(button.active), br)
         }).toSeq
       )
@@ -427,7 +431,7 @@ object BootstrapDemos extends StrictLogging {
     val toggleHighlight = UdashButton.toggle(active = highlightActive)("Toggle highlight")
 
     val pages = SeqProperty(Seq.tabulate[Page](7)(idx =>
-      DefaultPage((idx+1).toString, Url(applicationInstance.currentState.url))
+      DefaultPage((idx + 1).toString, Url(applicationInstance.currentState.url))
     ))
     val selected = Property(0)
     val pagination = UdashPagination(
@@ -585,7 +589,7 @@ object BootstrapDemos extends StrictLogging {
         window.setTimeout(() => modal.hide(), 2000)
         false
       }
-    ))
+      ))
     div(StyleUtils.center, GuideStyles.frame)(
       modal.render,
       UdashButtonGroup()(
@@ -632,7 +636,7 @@ object BootstrapDemos extends StrictLogging {
         window.setTimeout(() => collapse.hide(), 2000)
         false
       }
-    ))
+      ))
     div(StyleUtils.center, GuideStyles.frame)(
       UdashButtonGroup(justified = true)(
         toggleButton.render,
@@ -667,6 +671,49 @@ object BootstrapDemos extends StrictLogging {
       div(ResetGuideStyles.reset)(
         accordionElement
       )
+    ).render
+  }
+
+  def carousel(): dom.Element = {
+    def newSlide(): UdashCarouselSlide = UdashCarouselSlide(
+      Url("assets/images/ext/bootstrap/carousel.png")
+    )(
+      h3(randomString()),
+      p(randomString())
+    )
+    val slides = SeqProperty[UdashCarouselSlide]((1 to 4).map(_ => newSlide()))
+    val active = Property(false)
+    import scala.concurrent.duration._
+    val carousel = UdashCarousel(slides, activeSlide = 1,
+      animationOptions = AnimationOptions(interval = 2 seconds, keyboard = false, active = active.get)
+    )
+    val prevButton = UdashButton()("Prev")
+    val nextButton = UdashButton()("Next")
+    val prependButton = UdashButton()("Prepend")
+    val appendButton = UdashButton()("Append")
+    carousel.listen { case any => println(any) }
+    prevButton.listen { case _ => carousel.previousSlide() }
+    nextButton.listen { case _ => carousel.nextSlide() }
+    prependButton.listen { case _ => slides.prepend(newSlide()) }
+    appendButton.listen { case _ => slides.append(newSlide()) }
+    active.listen(b => if (b) carousel.cycle() else carousel.pause())
+    div(StyleUtils.center)(
+      div(GuideStyles.frame)(
+        UdashButtonToolbar(
+          UdashButton.toggle(active = active)("Run animation").render,
+          UdashButtonGroup()(
+            prevButton.render,
+            nextButton.render
+          ).render,
+          UdashButtonGroup()(
+            prependButton.render,
+            appendButton.render
+          ).render
+        ).render
+      ),
+      div(ResetGuideStyles.reset)(
+        carousel.render
+      ).render
     ).render
   }
 
